@@ -4,14 +4,17 @@ header .nav-wrapper {
   width: 100%;
   z-index: 2;
   position: fixed;
+  display: flex;
+  flex-direction: column;
 }
 
 header nav {
   box-sizing: border-box;
   display: grid;
-  grid-template:
+
+  /* grid-template:
     'hamburger brand tools' var(--nav-height)
-    'sections sections sections' 1fr / auto 1fr auto;
+    'sections sections sections' 1fr / auto 1fr auto; */
   align-items: center;
   gap: 0 24px;
   margin: auto;
@@ -19,6 +22,10 @@ header nav {
   height: var(--nav-height);
   padding: 0 24px;
   font-family: var(--body-font-family);
+  grid-template:
+    'promotional promotional promotional' auto
+    'hamburger brand tools' var(--nav-height)
+    'sections sections sections' 1fr / auto 1fr auto;
 }
 
 header nav[aria-expanded='true'] {
@@ -272,17 +279,38 @@ header nav .nav-tools {
 }
 
 /* Promotional top bar */
-.nav-wrapper .nav-sections:first-child,
-.nav .section:first-child {
+header nav .nav-promotional {
   background-color: #94FF5E;
   text-align: center;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   width: 100%;
+  box-sizing: border-box;
+  grid-column: 1 / -1;
+  grid-area: unset;
 }
 
-.nav-wrapper .nav-sections:first-child p,
-.nav .section:first-child p {
+header nav .nav-promotional p {
   margin: 0;
-  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Override nav grid to accommodate promotional bar */
+
+@media (width >= 900px) {
+  header nav {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+  }
+
+  header nav > *:not(.nav-promotional) {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 32px;
+    height: var(--nav-height);
+  }
 }
