@@ -323,3 +323,18 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+/* Promotional banner */
+.background-color-94ff5e {
+  background-color: #94FF5E;
+}
+
+.centered {
+  text-align: center;
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.centered p {
+  margin: 0;
+}
