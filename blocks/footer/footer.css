@@ -18,3 +18,28 @@ footer .footer p {
     padding: 40px 32px 24px;
   }
 }
+
+.footer-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+.footer-wrapper .footer {
+  padding: 0;
+  margin: 0;
+}
+
+.footer-wrapper .section {
+  padding: 0;
+  margin: 0;
+}
+
+.footer-wrapper .default-content-wrapper {
+  padding: 0;
+  margin: 0;
+}
+
+.footer-wrapper .form-container {
+  padding: 2rem;
+  margin: 0;
+}
