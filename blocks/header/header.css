@@ -270,6 +270,7 @@ header nav .nav-sections ul > li > ul > li {
 header nav .nav-tools {
   grid-area: tools;
 }
+
 /* Promotional top bar */
 header .nav-wrapper {
   display: flex;
