@@ -4,8 +4,10 @@ footer {
 }
 
 footer .footer > div {
+  
   /* margin: auto; */
   max-width: 100%;
+
   /* padding: 40px 24px 24px; */
 }
 
