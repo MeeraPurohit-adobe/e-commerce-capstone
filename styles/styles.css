@@ -327,3 +327,9 @@ main .section.highlight {
 .background-color-ebffdf {
   background-color: #EBFFDF;
 }
+
+.nav-wrapper .centered p:first-of-type {
+  text-align: center;
+  padding: 0.5rem 2rem;
+  background-color: #94FF5E;
+}
