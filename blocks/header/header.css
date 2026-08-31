@@ -287,12 +287,10 @@ header nav .nav-promotional {
   width: 100%;
   box-sizing: border-box;
   grid-column: 1 / -1;
-  grid-area: unset;
 }
 
 header nav .nav-promotional p {
   margin: 0;
-  font-size: 0.875rem;
   line-height: 1.5;
 }
 
@@ -303,14 +301,17 @@ header nav .nav-promotional p {
     display: flex;
     flex-direction: column;
     height: auto;
+    padding: 0;
   }
 
-  header nav > *:not(.nav-promotional) {
-    display: flex;
+  header nav .nav-promotional {
     width: 100%;
-    justify-content: space-between;
-    align-items: center;
+    padding: 0.5rem 32px;
+  }
+
+  header nav .nav-brand,
+  header nav .nav-sections,
+  header nav .nav-tools {
     padding: 0 32px;
-    height: var(--nav-height);
   }
 }
