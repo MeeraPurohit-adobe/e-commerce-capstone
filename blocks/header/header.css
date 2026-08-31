@@ -270,3 +270,11 @@ header nav .nav-sections ul > li > ul > li {
 header nav .nav-tools {
   grid-area: tools;
 }
+
+.background-color-94ff5e {
+  background-color: #94FF5E;
+}
+
+.offer-centered {
+  text-align: center;
+}
