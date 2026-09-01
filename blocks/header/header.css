@@ -233,8 +233,18 @@ header nav .nav-sections ul > li > ul > li {
 
   header nav .nav-sections ul {
     display: flex;
+    flex-direction: row;
     gap: 24px;
     margin: 0;
+    padding: 0;
+    list-style: none;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  header nav .nav-sections ul li {
+    display: inline-flex;
+    align-items: center;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
@@ -277,7 +287,19 @@ header nav .nav-sections ul > li > ul > li {
 
 /* tools */
 header nav .nav-tools {
-  grid-area: tools;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  white-space: nowrap;
+}
+
+header nav .nav-tools p {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin: 0;
+  align-items: center;
 }
 
 /* Promotional top bar */
@@ -300,10 +322,12 @@ header nav .nav-promotional p {
 
 @media (width >= 900px) {
   header nav {
-    display: contents;
-    flex-direction: column;
-    height: auto;
-    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: var(--nav-height);
+    padding: 0 32px;
   }
 
   header nav .nav-promotional {
