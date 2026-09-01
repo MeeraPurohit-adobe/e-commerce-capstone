@@ -118,8 +118,13 @@ export default async function decorate(block) {
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
-  // decorate nav DOM
   block.textContent = '';
+
+  // Add promotional banner BEFORE the nav
+  const promo = document.createElement('div');
+  promo.className = 'nav-promotional';
+  promo.innerHTML = '<p>Get <strong>15%</strong> off and free shipping with discount code "<strong>welcome</strong>"</p>';
+
   const nav = document.createElement('nav');
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
@@ -151,7 +156,6 @@ export default async function decorate(block) {
     });
   }
 
-  // hamburger for mobile
   const hamburger = document.createElement('div');
   hamburger.classList.add('nav-hamburger');
   hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="Open navigation">
@@ -160,12 +164,12 @@ export default async function decorate(block) {
   hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
   nav.prepend(hamburger);
   nav.setAttribute('aria-expanded', 'false');
-  // prevent mobile nav behavior on window resize
   toggleMenu(nav, navSections, isDesktop.matches);
   isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
 
   const navWrapper = document.createElement('div');
   navWrapper.className = 'nav-wrapper';
+  navWrapper.append(promo);
   navWrapper.append(nav);
   block.append(navWrapper);
 }
