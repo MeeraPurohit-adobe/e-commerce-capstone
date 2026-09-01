@@ -1,153 +1,105 @@
-import { fetchPlaceholders } from '../../scripts/placeholders.js';
+export default function decorate(block) {
+  // get all slides
+  const slides = [...block.querySelectorAll(':scope > div')];
+  if (!slides.length) return;
 
-function updateActiveSlide(slide) {
-  const block = slide.closest('.carousel');
-  const slideIndex = parseInt(slide.dataset.slideIndex, 10);
-  block.dataset.activeSlide = slideIndex;
+  // create slider wrapper
+  const slider = document.createElement('div');
+  slider.classList.add('carousel-slider');
 
-  const slides = block.querySelectorAll('.carousel-slide');
+  // create slides
+  slides.forEach((slide, index) => {
+    slide.classList.add('carousel-slide');
+    if (index === 0) slide.classList.add('active');
 
-  slides.forEach((aSlide, idx) => {
-    aSlide.setAttribute('aria-hidden', idx !== slideIndex);
-    aSlide.querySelectorAll('a').forEach((link) => {
-      if (idx !== slideIndex) {
-        link.setAttribute('tabindex', '-1');
-      } else {
-        link.removeAttribute('tabindex');
+    const cols = [...slide.querySelectorAll(':scope > div')];
+    const mediaCol = cols[0];
+    const contentCol = cols[1];
+
+    if (mediaCol) {
+      mediaCol.classList.add('carousel-media');
+
+      // check for video URL
+      const link = mediaCol.querySelector('a');
+      if (link && (link.href.includes('.mp4') || link.href.includes('video'))) {
+        const video = document.createElement('video');
+        video.src = link.href;
+        video.autoplay = true;
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        video.setAttribute('aria-label', 'carousel video');
+        link.replaceWith(video);
       }
-    });
-  });
-
-  const indicators = block.querySelectorAll('.carousel-slide-indicator');
-  indicators.forEach((indicator, idx) => {
-    const button = indicator.querySelector('button');
-    if (idx !== slideIndex) {
-      button.removeAttribute('disabled');
-      button.removeAttribute('aria-current');
-    } else {
-      button.setAttribute('disabled', true);
-      button.setAttribute('aria-current', true);
     }
-  });
-}
 
-function showSlide(block, slideIndex = 0) {
-  const slides = block.querySelectorAll('.carousel-slide');
-  let realSlideIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
-  if (slideIndex >= slides.length) realSlideIndex = 0;
-  const activeSlide = slides[realSlideIndex];
+    if (contentCol) {
+      contentCol.classList.add('carousel-content');
 
-  activeSlide.querySelectorAll('a').forEach((link) => link.removeAttribute('tabindex'));
-  block.querySelector('.carousel-slides').scrollTo({
-    top: 0,
-    left: activeSlide.offsetLeft,
-    behavior: 'smooth',
-  });
-}
-
-function bindEvents(block) {
-  const slideIndicators = block.querySelector('.carousel-slide-indicators');
-  if (!slideIndicators) return;
-
-  slideIndicators.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const slideIndicator = e.currentTarget.parentElement;
-      showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
-    });
-  });
-
-  block.querySelector('.slide-prev').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) - 1);
-  });
-  block.querySelector('.slide-next').addEventListener('click', () => {
-    showSlide(block, parseInt(block.dataset.activeSlide, 10) + 1);
-  });
-
-  const slideObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) updateActiveSlide(entry.target);
-    });
-  }, { threshold: 0.5 });
-  block.querySelectorAll('.carousel-slide').forEach((slide) => {
-    slideObserver.observe(slide);
-  });
-}
-
-function createSlide(row, slideIndex, carouselId) {
-  const slide = document.createElement('li');
-  slide.dataset.slideIndex = slideIndex;
-  slide.setAttribute('id', `carousel-${carouselId}-slide-${slideIndex}`);
-  slide.classList.add('carousel-slide');
-
-  row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
-    column.classList.add(`carousel-slide-${colIdx === 0 ? 'image' : 'content'}`);
-    slide.append(column);
-  });
-
-  const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
-  if (labeledBy) {
-    slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));
-  }
-
-  return slide;
-}
-
-let carouselId = 0;
-export default async function decorate(block) {
-  carouselId += 1;
-  block.setAttribute('id', `carousel-${carouselId}`);
-  const rows = block.querySelectorAll(':scope > div');
-  const isSingleSlide = rows.length < 2;
-
-  const placeholders = await fetchPlaceholders();
-
-  block.setAttribute('role', 'region');
-  block.setAttribute('aria-roledescription', placeholders.carousel || 'Carousel');
-
-  const container = document.createElement('div');
-  container.classList.add('carousel-slides-container');
-
-  const slidesWrapper = document.createElement('ul');
-  slidesWrapper.classList.add('carousel-slides');
-  block.prepend(slidesWrapper);
-
-  let slideIndicators;
-  if (!isSingleSlide) {
-    const slideIndicatorsNav = document.createElement('nav');
-    slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
-    slideIndicators = document.createElement('ol');
-    slideIndicators.classList.add('carousel-slide-indicators');
-    slideIndicatorsNav.append(slideIndicators);
-    block.append(slideIndicatorsNav);
-
-    const slideNavButtons = document.createElement('div');
-    slideNavButtons.classList.add('carousel-navigation-buttons');
-    slideNavButtons.innerHTML = `
-      <button type="button" class= "slide-prev" aria-label="${placeholders.previousSlide || 'Previous Slide'}"></button>
-      <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
-    `;
-
-    container.append(slideNavButtons);
-  }
-
-  rows.forEach((row, idx) => {
-    const slide = createSlide(row, idx, carouselId);
-    slidesWrapper.append(slide);
-
-    if (slideIndicators) {
-      const indicator = document.createElement('li');
-      indicator.classList.add('carousel-slide-indicator');
-      indicator.dataset.targetSlide = idx;
-      indicator.innerHTML = `<button type="button" aria-label="${placeholders.showSlide || 'Show Slide'} ${idx + 1} ${placeholders.of || 'of'} ${rows.length}"></button>`;
-      slideIndicators.append(indicator);
+      // style CTA link as button
+      const cta = contentCol.querySelector('a');
+      if (cta) cta.classList.add('carousel-cta');
     }
-    row.remove();
+
+    slider.append(slide);
   });
 
-  container.append(slidesWrapper);
-  block.prepend(container);
+  // create prev button
+  const prevBtn = document.createElement('button');
+  prevBtn.classList.add('carousel-prev');
+  prevBtn.setAttribute('aria-label', 'Previous slide');
+  prevBtn.innerHTML = '&#8592;';
 
-  if (!isSingleSlide) {
-    bindEvents(block);
+  // create next button
+  const nextBtn = document.createElement('button');
+  nextBtn.classList.add('carousel-next');
+  nextBtn.setAttribute('aria-label', 'Next slide');
+  nextBtn.innerHTML = '&#8594;';
+
+  // create dots
+  const dotsWrapper = document.createElement('div');
+  dotsWrapper.classList.add('carousel-dots');
+  slides.forEach((_, index) => {
+    const dot = document.createElement('button');
+    dot.classList.add('carousel-dot');
+    if (index === 0) dot.classList.add('active');
+    dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+    dot.addEventListener('click', () => goToSlide(index));
+    dotsWrapper.append(dot);
+  });
+
+  // slide logic
+  let current = 0;
+
+  function goToSlide(index) {
+    const allSlides = slider.querySelectorAll('.carousel-slide');
+    const allDots = dotsWrapper.querySelectorAll('.carousel-dot');
+
+    allSlides[current].classList.remove('active');
+    allDots[current].classList.remove('active');
+
+    current = (index + allSlides.length) % allSlides.length;
+
+    allSlides[current].classList.add('active');
+    allDots[current].classList.add('active');
   }
+
+  prevBtn.addEventListener('click', () => goToSlide(current - 1));
+  nextBtn.addEventListener('click', () => goToSlide(current + 1));
+
+  // auto play every 5 seconds
+  let autoPlay = setInterval(() => goToSlide(current + 1), 5000);
+
+  // pause on hover
+  slider.addEventListener('mouseenter', () => clearInterval(autoPlay));
+  slider.addEventListener('mouseleave', () => {
+    autoPlay = setInterval(() => goToSlide(current + 1), 5000);
+  });
+
+  // clear block and append everything
+  block.textContent = '';
+  block.append(prevBtn);
+  block.append(slider);
+  block.append(nextBtn);
+  block.append(dotsWrapper);
 }
