@@ -1,13 +1,10 @@
 export default function decorate(block) {
-  // get all slides
   const slides = [...block.querySelectorAll(':scope > div')];
   if (!slides.length) return;
 
-  // create slider wrapper
   const slider = document.createElement('div');
   slider.classList.add('carousel-slider');
 
-  // create slides
   slides.forEach((slide, index) => {
     slide.classList.add('carousel-slide');
     if (index === 0) slide.classList.add('active');
@@ -16,12 +13,17 @@ export default function decorate(block) {
     const mediaCol = cols[0];
     const contentCol = cols[1];
 
-    if (mediaCol) {
-      mediaCol.classList.add('carousel-media');
+    // create slide inner wrapper
+    const inner = document.createElement('div');
+    inner.classList.add('carousel-inner');
 
-      // check for video URL
+    // handle media
+    if (mediaCol) {
+      const mediaWrapper = document.createElement('div');
+      mediaWrapper.classList.add('carousel-media');
+
       const link = mediaCol.querySelector('a');
-      if (link && (link.href.includes('.mp4') || link.href.includes('video'))) {
+      if (link && link.href.includes('.mp4')) {
         const video = document.createElement('video');
         video.src = link.href;
         video.autoplay = true;
@@ -29,36 +31,56 @@ export default function decorate(block) {
         video.loop = true;
         video.playsInline = true;
         video.setAttribute('aria-label', 'carousel video');
-        link.replaceWith(video);
+        mediaWrapper.append(video);
+      } else {
+        const img = mediaCol.querySelector('img');
+        if (img) mediaWrapper.append(img);
       }
+
+      inner.append(mediaWrapper);
     }
 
+    // handle content - overlaid on top of media
     if (contentCol) {
       contentCol.classList.add('carousel-content');
-
-      // style CTA link as button
       const cta = contentCol.querySelector('a');
       if (cta) cta.classList.add('carousel-cta');
+      inner.append(contentCol);
     }
 
+    slide.textContent = '';
+    slide.append(inner);
     slider.append(slide);
   });
 
-  // create prev button
+  // prev button
   const prevBtn = document.createElement('button');
   prevBtn.classList.add('carousel-prev');
   prevBtn.setAttribute('aria-label', 'Previous slide');
   prevBtn.innerHTML = '&#8592;';
 
-  // create next button
+  // next button
   const nextBtn = document.createElement('button');
   nextBtn.classList.add('carousel-next');
   nextBtn.setAttribute('aria-label', 'Next slide');
   nextBtn.innerHTML = '&#8594;';
 
-  // create dots
+  // dots
   const dotsWrapper = document.createElement('div');
   dotsWrapper.classList.add('carousel-dots');
+
+  let current = 0;
+
+  function goToSlide(index) {
+    const allSlides = slider.querySelectorAll('.carousel-slide');
+    const allDots = dotsWrapper.querySelectorAll('.carousel-dot');
+    allSlides[current].classList.remove('active');
+    allDots[current].classList.remove('active');
+    current = (index + allSlides.length) % allSlides.length;
+    allSlides[current].classList.add('active');
+    allDots[current].classList.add('active');
+  }
+
   slides.forEach((_, index) => {
     const dot = document.createElement('button');
     dot.classList.add('carousel-dot');
@@ -68,35 +90,16 @@ export default function decorate(block) {
     dotsWrapper.append(dot);
   });
 
-  // slide logic
-  let current = 0;
-
-  function goToSlide(index) {
-    const allSlides = slider.querySelectorAll('.carousel-slide');
-    const allDots = dotsWrapper.querySelectorAll('.carousel-dot');
-
-    allSlides[current].classList.remove('active');
-    allDots[current].classList.remove('active');
-
-    current = (index + allSlides.length) % allSlides.length;
-
-    allSlides[current].classList.add('active');
-    allDots[current].classList.add('active');
-  }
-
   prevBtn.addEventListener('click', () => goToSlide(current - 1));
   nextBtn.addEventListener('click', () => goToSlide(current + 1));
 
-  // auto play every 5 seconds
+  // autoplay
   let autoPlay = setInterval(() => goToSlide(current + 1), 5000);
-
-  // pause on hover
   slider.addEventListener('mouseenter', () => clearInterval(autoPlay));
   slider.addEventListener('mouseleave', () => {
     autoPlay = setInterval(() => goToSlide(current + 1), 5000);
   });
 
-  // clear block and append everything
   block.textContent = '';
   block.append(prevBtn);
   block.append(slider);
