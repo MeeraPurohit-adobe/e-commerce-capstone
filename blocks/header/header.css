@@ -1,4 +1,4 @@
-/* header and nav layout */
+/* nav base */
 header nav p {
   margin: 0;
   line-height: 1;
@@ -9,6 +9,7 @@ header nav a:any-link {
   text-decoration: none;
 }
 
+/* nav wrapper */
 header .nav-wrapper {
   background-color: var(--background-color);
   width: 100%;
@@ -18,7 +19,7 @@ header .nav-wrapper {
   flex-direction: column;
 }
 
-/* promotional top bar */
+/* promotional bar */
 header .nav-wrapper .nav-promotional {
   background-color: #94ff5e;
   text-align: center;
@@ -49,7 +50,7 @@ header nav {
   gap: 32px;
 }
 
-/* brand / logo */
+/* brand */
 header .nav-brand {
   flex: 0 0 auto;
   font-size: var(--heading-font-size-s);
@@ -62,7 +63,7 @@ header nav .nav-brand img {
   height: auto;
 }
 
-/* nav sections - center */
+/* nav sections */
 header nav .nav-sections {
   flex: 1 1 auto;
   display: flex;
@@ -80,21 +81,27 @@ header nav .nav-sections ul {
   align-items: center;
 }
 
-header nav .nav-sections ul li {
+header nav .nav-sections ul > li {
   font-size: var(--body-font-size-s);
   font-weight: 500;
 }
 
-header nav .nav-sections ul li a {
-  text-decoration: none;
-  color: currentcolor;
+header nav .nav-sections ul > li > ul {
+  display: none;
+  position: absolute;
+  left: -24px;
+  width: 200px;
+  top: 150%;
+  padding: 16px;
+  background-color: var(--light-color);
+  white-space: initial;
 }
 
-header nav .nav-sections ul li a:hover {
-  text-decoration: underline;
+header nav .nav-sections ul > li[aria-expanded='true'] > ul {
+  display: block;
 }
 
-/* nav tools - right side icons */
+/* nav tools */
 header nav .nav-tools {
   flex: 0 0 auto;
   display: flex;
@@ -111,7 +118,7 @@ header nav .nav-tools p {
   align-items: center;
 }
 
-/* hamburger - hidden on desktop */
+/* hamburger */
 header nav .nav-hamburger {
   display: none;
   visibility: hidden;
@@ -187,8 +194,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 
   header nav {
     display: grid;
-    grid-template:
-      'hamburger brand tools' var(--nav-height) / auto 1fr auto;
+    grid-template: 'hamburger brand tools' var(--nav-height) / auto 1fr auto;
     padding: 0 24px;
     gap: 0 24px;
     max-width: 100%;
