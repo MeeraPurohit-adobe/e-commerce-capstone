@@ -2,9 +2,6 @@
 .sort {
   width: 100%;
   box-sizing: border-box;
-  max-width: 1264px;
-  margin: auto;
-  padding: 1rem 2rem 0;
 }
 
 .sort-wrapper {
@@ -13,6 +10,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .sort-label {
@@ -35,15 +33,4 @@
 
 .sort-select:focus {
   border-color: #1a3c2e;
-}
-
-/* mobile */
-@media (width < 600px) {
-  .sort {
-    padding: 0.75rem 1rem 0;
-  }
-
-  .sort-wrapper {
-    justify-content: flex-start;
-  }
 }

@@ -12,11 +12,12 @@ export function renderSizeFilter(container, allData, onChange) {
   loadCSS();
   container.textContent = '';
 
-  // check which sizes exist in data
-  const sizes = [];
-  if (allData.some((p) => p['size-small'] === 'Yes')) sizes.push({ label: 'Small', key: 'size-small' });
-  if (allData.some((p) => p['size-medium'] === 'Yes')) sizes.push({ label: 'Medium', key: 'size-medium' });
-  if (allData.some((p) => p['size-large'] === 'Yes')) sizes.push({ label: 'Large', key: 'size-large' });
+  // always show all 3 size buttons
+  const sizes = [
+    { label: 'Small', key: 'size-small' },
+    { label: 'Medium', key: 'size-medium' },
+    { label: 'Large', key: 'size-large' },
+  ];
 
   const params = new URLSearchParams(window.location.search);
   const selected = params.get('sizes') ? params.get('sizes').split(',') : [];
