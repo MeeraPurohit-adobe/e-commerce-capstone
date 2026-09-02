@@ -10,12 +10,14 @@ export default async function decorate(block) {
   const wrapper = document.createElement('div');
   wrapper.classList.add('best-sellers-wrapper');
 
+  // left text section
   const leftSection = document.createElement('div');
   leftSection.classList.add('best-sellers-left');
   if (headerCols[0]) leftSection.innerHTML = headerCols[0].innerHTML;
   const cta = leftSection.querySelector('a');
   if (cta) cta.classList.add('best-sellers-cta');
 
+  // right cards grid
   const grid = document.createElement('div');
   grid.classList.add('best-sellers-grid');
   grid.innerHTML = '<p class="best-sellers-loading">Loading...</p>';
@@ -26,6 +28,7 @@ export default async function decorate(block) {
   block.append(wrapper);
 
   try {
+    // fetch from sheet
     const resp = await fetch('/data/best-sellers.json');
     if (!resp.ok) throw new Error('Failed to fetch');
     const json = await resp.json();
@@ -38,7 +41,7 @@ export default async function decorate(block) {
       return;
     }
 
-    // use reusable card component
+    // build each card dynamically using card.js
     products.forEach((product) => {
       const card = buildCard(product);
       grid.append(card);
