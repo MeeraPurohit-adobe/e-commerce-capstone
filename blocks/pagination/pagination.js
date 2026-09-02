@@ -8,6 +8,20 @@ function loadPaginationCSS() {
   }
 }
 
+function getPageFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get('page') || '1', 10);
+}
+
+function goToPage(page, totalPages, onPageChange) {
+  if (page < 1 || page > totalPages) return;
+  // update URL with new page
+  const url = new URL(window.location.href);
+  url.searchParams.set('page', page);
+  window.history.pushState({}, '', url);
+  onPageChange(page);
+}
+
 export function renderPagination(container, currentPage, totalPages, onPageChange) {
   loadPaginationCSS();
   container.textContent = '';
@@ -17,22 +31,21 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   nav.classList.add('pagination');
   nav.setAttribute('aria-label', 'pagination');
 
+  // prev button
   const prevBtn = document.createElement('button');
   prevBtn.classList.add('pagination-btn', 'pagination-prev');
   prevBtn.textContent = '← Prev';
   prevBtn.disabled = currentPage === 1;
-  prevBtn.addEventListener('click', () => {
-    if (currentPage > 1) onPageChange(currentPage - 1);
-  });
+  prevBtn.addEventListener('click', () => goToPage(currentPage - 1, totalPages, onPageChange));
 
+  // next button
   const nextBtn = document.createElement('button');
   nextBtn.classList.add('pagination-btn', 'pagination-next');
   nextBtn.textContent = 'Next →';
   nextBtn.disabled = currentPage === totalPages;
-  nextBtn.addEventListener('click', () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
-  });
+  nextBtn.addEventListener('click', () => goToPage(currentPage + 1, totalPages, onPageChange));
 
+  // page numbers with ellipsis
   const pageList = document.createElement('ul');
   pageList.classList.add('pagination-list');
 
@@ -62,7 +75,7 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
       btn.classList.add('pagination-page-btn');
       btn.textContent = page;
       if (page === currentPage) btn.classList.add('active');
-      btn.addEventListener('click', () => onPageChange(page));
+      btn.addEventListener('click', () => goToPage(page, totalPages, onPageChange));
       li.append(btn);
     }
     pageList.append(li);
@@ -74,14 +87,34 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   container.append(nav);
 }
 
-// standalone block decorator - renders a preview with 10 pages
-export default function decorate(block) {
+export default async function decorate(block) {
   loadPaginationCSS();
   block.textContent = '';
-  renderPagination(block, 1, 10, (page) => {
-    // update active state on standalone preview
-    block.querySelectorAll('.pagination-page-btn').forEach((btn) => {
-      btn.classList.toggle('active', parseInt(btn.textContent, 10) === page);
+
+  // fetch total records to calculate total pages
+  try {
+    const resp = await fetch('/data/plants-listing.json?offset=0&limit=1');
+    if (!resp.ok) throw new Error('Failed to fetch');
+    const json = await resp.json();
+    const totalRecords = json.total || 100;
+    const totalPages = Math.ceil(totalRecords / 10);
+    let currentPage = getPageFromURL();
+
+    function onPageChange(newPage) {
+      currentPage = newPage;
+      renderPagination(block, currentPage, totalPages, onPageChange);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderPagination(block, currentPage, totalPages, onPageChange);
+
+    // listen for browser back/forward
+    window.addEventListener('popstate', () => {
+      currentPage = getPageFromURL();
+      renderPagination(block, currentPage, totalPages, onPageChange);
     });
-  });
+
+  } catch (e) {
+    block.innerHTML = '<p>Failed to load pagination.</p>';
+  }
 }

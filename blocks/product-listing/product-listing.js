@@ -1,7 +1,11 @@
 import { buildCard } from '../card/card.js';
-import { renderPagination } from '../pagination/pagination.js';
 
 const PAGE_SIZE = 10;
+
+function getPageFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return parseInt(params.get('page') || '1', 10);
+}
 
 export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
@@ -40,19 +44,15 @@ export default async function decorate(block) {
   sortWrapper.append(sortSelect);
   headingRow.append(sortWrapper);
 
-  // filters section - left (empty for now)
+  // filters - left
   const filtersSection = document.createElement('div');
   filtersSection.classList.add('product-listing-filters');
   filtersSection.innerHTML = '<p class="product-listing-filters-placeholder">Filters coming soon...</p>';
 
-  // cards section - right
+  // cards - right
   const cardsSection = document.createElement('div');
   cardsSection.classList.add('product-listing-cards');
   cardsSection.innerHTML = '<p class="product-listing-loading">Loading plants...</p>';
-
-  // pagination container
-  const paginationContainer = document.createElement('div');
-  paginationContainer.classList.add('product-listing-pagination');
 
   // body layout
   const bodySection = document.createElement('div');
@@ -63,32 +63,26 @@ export default async function decorate(block) {
   block.textContent = '';
   block.append(headingRow);
   block.append(bodySection);
-  block.append(paginationContainer);
 
   // state
-  let currentPage = 1;
-  let totalRecords = 0;
   let sortValue = 'featured-items';
 
-  // fetch a single page of data using offset + limit
-  async function fetchPage(page, sort) {
+  // fetch page using offset + limit
+  async function fetchPage(page) {
     const offset = (page - 1) * PAGE_SIZE;
     const url = `/data/plants-listing.json?offset=${offset}&limit=${PAGE_SIZE}`;
     const resp = await fetch(url);
     if (!resp.ok) throw new Error('Failed to fetch');
-    const json = await resp.json();
-    return json;
+    return resp.json();
   }
 
   // render cards for current page
   async function loadPage(page) {
     cardsSection.innerHTML = '<p class="product-listing-loading">Loading...</p>';
-    paginationContainer.textContent = '';
 
     try {
-      const json = await fetchPage(page, sortValue);
+      const json = await fetchPage(page);
       let products = json.data || [];
-      totalRecords = json.total || products.length;
 
       // client side sort
       if (sortValue === 'price--low-to-high') {
@@ -106,7 +100,6 @@ export default async function decorate(block) {
         return;
       }
 
-      // render cards
       products.forEach((plant) => {
         const cardWrapper = document.createElement('div');
         cardWrapper.classList.add('product-listing-card-wrapper');
@@ -135,14 +128,6 @@ export default async function decorate(block) {
         cardsSection.append(cardWrapper);
       });
 
-      // render pagination
-      const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
-      renderPagination(paginationContainer, currentPage, totalPages, (newPage) => {
-        currentPage = newPage;
-        loadPage(currentPage);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-
     } catch (e) {
       cardsSection.innerHTML = '<p class="product-listing-error">Failed to load plants.</p>';
     }
@@ -151,10 +136,18 @@ export default async function decorate(block) {
   // sort change handler
   sortSelect.addEventListener('change', () => {
     sortValue = sortSelect.value;
-    currentPage = 1;
-    loadPage(currentPage);
+    // reset to page 1 on sort change
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', '1');
+    window.history.pushState({}, '', url);
+    loadPage(1);
   });
 
-  // initial load
-  loadPage(currentPage);
+  // listen for URL changes (browser back/forward)
+  window.addEventListener('popstate', () => {
+    loadPage(getPageFromURL());
+  });
+
+  // initial load from URL
+  loadPage(getPageFromURL());
 }
