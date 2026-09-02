@@ -373,7 +373,7 @@ main .section.highlight {
   position: sticky;
   top: 100px;
   align-self: start;
-  margin-top: -3.5rem;
+  margin-top: 8.5rem;
 }
 
 /* remove borders from advance filter */
