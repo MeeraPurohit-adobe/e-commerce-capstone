@@ -9,6 +9,15 @@ header nav a:any-link {
   text-decoration: none;
 }
 
+/* nav tools p - must come before nav-promotional p */
+header nav .nav-tools p {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin: 0;
+  align-items: center;
+}
+
 /* nav wrapper */
 header .nav-wrapper {
   background-color: var(--background-color);
@@ -108,14 +117,6 @@ header nav .nav-tools {
   flex-direction: row;
   align-items: center;
   gap: 16px;
-}
-
-header nav .nav-tools p {
-  display: flex;
-  flex-direction: row;
-  gap: 16px;
-  margin: 0;
-  align-items: center;
 }
 
 /* hamburger */
