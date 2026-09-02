@@ -15,55 +15,35 @@ export default async function decorate(block) {
   if (!rows.length) return;
 
   // row 1 = heading
-  const headingRow = rows[0];
-  const headingCol = headingRow.querySelector(':scope > div');
-
-  const heading = headingCol?.querySelector('h1');
+  const topCol = rows[0].querySelector(':scope > div');
 
   const headingWrapper = document.createElement('div');
   headingWrapper.classList.add('product-listing-heading-row');
+
+  const heading = topCol?.querySelector('h1');
   if (heading) headingWrapper.append(heading);
 
-  // row 2 = left (advance-filter) + right (cards)
-  const bodyRow = rows[1];
-  const bodyCols = [...(bodyRow?.querySelectorAll(':scope > div') || [])];
-
-  // left column — advance-filter
-  const leftCol = document.createElement('div');
-  leftCol.classList.add('product-listing-left');
-
-  // move advance-filter block into left col
-  const advanceFilter = bodyCols[0]?.querySelector('.advance-filter');
-  if (advanceFilter) leftCol.append(advanceFilter);
-
-  // right column — cards
-  const rightCol = document.createElement('div');
-  rightCol.classList.add('product-listing-right');
-
+  // cards section
   const cardsSection = document.createElement('div');
   cardsSection.classList.add('product-listing-cards');
   cardsSection.innerHTML = '<p class="product-listing-loading">Loading plants...</p>';
-  rightCol.append(cardsSection);
-
-  // build layout
-  const bodyWrapper = document.createElement('div');
-  bodyWrapper.classList.add('product-listing-body');
-  bodyWrapper.append(leftCol);
-  bodyWrapper.append(rightCol);
 
   block.textContent = '';
   block.append(headingWrapper);
-  block.append(bodyWrapper);
+  block.append(cardsSection);
 
   async function loadPage(page) {
     cardsSection.innerHTML = '<p class="product-listing-loading">Loading...</p>';
 
     try {
+      // step 1 — get all sorted data
       const allData = await getSortedData(DATA_URL);
+
+      // step 2 — apply filters from URL
       const filters = getFiltersFromURL();
       const filteredData = applyFilters(allData, filters);
 
-      // update count in heading
+      // step 3 — update count in heading
       const h1 = headingWrapper.querySelector('h1');
       if (h1) {
         const existingCount = h1.querySelector('.product-count');
@@ -74,16 +54,17 @@ export default async function decorate(block) {
         h1.append(countSpan);
       }
 
+      // step 4 — paginate
       const start = (page - 1) * PAGE_SIZE;
       const products = filteredData.slice(start, start + PAGE_SIZE);
 
-      // store total for pagination
+      // store total for pagination block
       sessionStorage.setItem('total-records', filteredData.length);
 
       cardsSection.textContent = '';
 
       if (!products.length) {
-        cardsSection.innerHTML = '<p class="product-listing-error">No plants found.</p>';
+        cardsSection.innerHTML = '<p class="product-listing-error">No plants found matching your filters.</p>';
         return;
       }
 
@@ -119,8 +100,10 @@ export default async function decorate(block) {
     }
   }
 
+  // listen for filter and pagination changes
   window.addEventListener('filters-changed', () => loadPage(getPageFromURL()));
   window.addEventListener('popstate', () => loadPage(getPageFromURL()));
 
+  // initial load
   loadPage(getPageFromURL());
 }
