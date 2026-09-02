@@ -7,6 +7,7 @@
   max-width: 1264px;
 }
 
+/* two column row - side by side */
 .promo-banner > div {
   display: flex;
   flex-direction: row;
@@ -40,10 +41,9 @@
   background-color: #0d4409;
 }
 
-/* label - Thoughtfully Curated */
+/* Thoughtfully Curated label */
 .promo-banner-label {
-  display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: #6aeb60;
   text-transform: uppercase;
@@ -61,7 +61,7 @@
   line-height: 1.2;
 }
 
-/* description - white text */
+/* description */
 .promo-banner-text p {
   font-size: 1rem;
   color: #fff;
@@ -70,17 +70,12 @@
   max-width: 380px;
 }
 
-/* override label color */
-.promo-banner-label {
-  color: #6aeb60;
-}
-
-/* CTA button */
+/* CTA button - green background, black text */
 .promo-banner-cta {
   display: inline-block;
   padding: 0.75rem 2rem;
   background-color: #6aeb60;
-  color: #0d4409;
+  color: #000;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.9rem;
@@ -92,6 +87,7 @@
 
 .promo-banner-cta:hover {
   background-color: #94ff5e;
+  color: #000;
 }
 
 /* mobile */
