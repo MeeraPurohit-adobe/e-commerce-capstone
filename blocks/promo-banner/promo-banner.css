@@ -1,14 +1,15 @@
-/* promo banner wrapper */
-.promo-banner {
+/* promo banner alt block */
+.promo-banner-alt {
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
   margin: 2rem auto;
   max-width: 1264px;
+  border-radius: 16px;
 }
 
-/* two column row - side by side */
-.promo-banner > div {
+/* two column row */
+.promo-banner-alt > div {
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -17,21 +18,8 @@
   min-height: 480px;
 }
 
-/* image column - left */
-.promo-banner-image {
-  flex: 1 1 50%;
-  overflow: hidden;
-}
-
-.promo-banner-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* text column - right */
-.promo-banner-text {
+/* text column - left */
+.promo-banner-alt-text {
   flex: 1 1 50%;
   display: flex;
   flex-direction: column;
@@ -39,13 +27,14 @@
   gap: 1.5rem;
   padding: 3.5rem 3rem;
   background-color: #0d4409;
+  border-radius: 16px 0 0 16px;
 }
 
-/* Thoughtfully Curated label */
-.promo-banner-label {
-  font-size: 0.85rem;
+/* label */
+.promo-banner-alt-label {
+  font-size: 0.75rem;
   font-weight: 700;
-  color: #6aeb60;
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0;
@@ -53,7 +42,7 @@
 }
 
 /* heading */
-.promo-banner-text h2 {
+.promo-banner-alt-text h2 {
   font-size: 2.5rem;
   font-weight: 700;
   color: #fff;
@@ -62,7 +51,7 @@
 }
 
 /* description */
-.promo-banner-text p {
+.promo-banner-alt-text p {
   font-size: 1rem;
   color: #fff;
   margin: 0;
@@ -70,11 +59,11 @@
   max-width: 380px;
 }
 
-/* CTA button - green background, black text */
-.promo-banner-cta {
+/* CTA button */
+.promo-banner-alt-cta {
   display: inline-block;
   padding: 0.75rem 2rem;
-  background-color: #6aeb60;
+  background-color: #94ff5e;
   color: #000;
   text-decoration: none;
   font-weight: 700;
@@ -85,31 +74,53 @@
   margin-top: 0.5rem;
 }
 
-.promo-banner-cta:hover {
-  background-color: #94ff5e;
-  color: #000;
+.promo-banner-alt-cta:hover {
+  background-color: #6aeb60;
+}
+
+/* image column - right */
+.promo-banner-alt-image {
+  flex: 1 1 50%;
+  overflow: hidden;
+  border-radius: 0 16px 16px 0;
+  background: none;
+}
+
+.promo-banner-alt-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* mobile */
 @media (width < 900px) {
-  .promo-banner > div {
+  .promo-banner-alt {
+    border-radius: 12px;
+  }
+
+  .promo-banner-alt > div {
     flex-direction: column;
     min-height: auto;
   }
 
-  .promo-banner-image {
+  .promo-banner-alt-image {
     height: 300px;
+    order: -1;
+    border-radius: 12px 12px 0 0;
+    background: none;
   }
 
-  .promo-banner-text {
+  .promo-banner-alt-text {
     padding: 2rem 1.5rem;
+    border-radius: 0 0 12px 12px;
   }
 
-  .promo-banner-text p {
-    max-width: 100%;
-  }
-
-  .promo-banner-text h2 {
+  .promo-banner-alt-text h2 {
     font-size: 1.75rem;
+  }
+
+  .promo-banner-alt-text p {
+    max-width: 100%;
   }
 }
