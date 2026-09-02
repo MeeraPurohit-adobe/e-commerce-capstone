@@ -10,7 +10,7 @@ async function loadCardCSS() {
 
 function renderStars(rating) {
   const stars = [];
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 5; i += 1) {
     if (i <= Math.floor(rating)) {
       stars.push('<span class="star full">★</span>');
     } else if (i === Math.ceil(rating) && rating % 1 >= 0.5) {

@@ -89,7 +89,7 @@ export default function decorate(block) {
     url.searchParams.set('sort', sortSelect.value);
     url.searchParams.set('page', '1');
     // clear cached data so sort re-fetches
-    sessionStorage.removeItem(`sort-data-/data/plants-listing.json`);
+    sessionStorage.removeItem('sort-data-/data/plants-listing.json');
     window.location.href = url.toString();
   });
 

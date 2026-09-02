@@ -114,7 +114,6 @@ export default async function decorate(block) {
 
         cardsSection.append(cardWrapper);
       });
-
     } catch (e) {
       cardsSection.innerHTML = '<p class="product-listing-error">Failed to load plants.</p>';
     }

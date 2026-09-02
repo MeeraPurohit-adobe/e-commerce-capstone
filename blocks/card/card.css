@@ -120,7 +120,7 @@
 }
 
 .star.full {
-  color: #000000;
+  color: #000;
 }
 
 .star.empty {
@@ -141,7 +141,7 @@
   left: 0;
   width: 50%;
   overflow: hidden;
-  color: #000000;
+  color: #000;
 }
 
 .card-reviews {
@@ -186,7 +186,7 @@
   display: block;
   width: 100%;
   padding: 0.65rem 1rem;
-  background-color: #000000;
+  background-color: #000;
   color: #fff;
   text-decoration: none;
   font-weight: 700;
@@ -199,5 +199,5 @@
 }
 
 .card-cta:hover {
-  background-color: #000000;
+  background-color: #000;
 }
