@@ -173,3 +173,11 @@
     grid-template-columns: 1fr;
   }
 }
+
+* count beside heading */
+#product-count {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #888;
+  margin-left: 0.5rem;
+}

@@ -51,6 +51,8 @@ export default async function decorate(block) {
       // get all sorted records from sort.js
       const allData = await getSortedData(DATA_URL);
       const totalRecords = allData.length;
+      const countSpan = document.querySelector('#product-count');
+      if (countSpan) countSpan.textContent = `(${totalRecords})`;
       const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
 
       // slice for current page
