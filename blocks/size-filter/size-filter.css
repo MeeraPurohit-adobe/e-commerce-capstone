@@ -1,0 +1,38 @@
+/* size filter */
+.size-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.size-filter-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.size-filter-btn {
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+  text-align: center;
+}
+
+.size-filter-btn:hover {
+  border-color: #1a3c2e;
+  color: #1a3c2e;
+}
+
+.size-filter-btn.active {
+  background: #1a3c2e;
+  border-color: #1a3c2e;
+  color: #fff;
+}

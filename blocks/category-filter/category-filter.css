@@ -1,0 +1,38 @@
+/* category filter */
+.category-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.category-filter-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: #444;
+  cursor: pointer;
+  padding: 0.25rem 0.35rem;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.category-filter-label:hover {
+  background: #f0f7ee;
+  color: #1a3c2e;
+}
+
+.category-filter-checkbox {
+  width: 15px;
+  height: 15px;
+  accent-color: #1a3c2e;
+  cursor: pointer;
+  flex-shrink: 0;
+}
