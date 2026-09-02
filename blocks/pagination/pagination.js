@@ -10,16 +10,13 @@ function loadPaginationCSS() {
 
 export function renderPagination(container, currentPage, totalPages, onPageChange) {
   loadPaginationCSS();
-
   container.textContent = '';
-
   if (totalPages <= 1) return;
 
   const nav = document.createElement('nav');
   nav.classList.add('pagination');
   nav.setAttribute('aria-label', 'pagination');
 
-  // prev button
   const prevBtn = document.createElement('button');
   prevBtn.classList.add('pagination-btn', 'pagination-prev');
   prevBtn.textContent = '← Prev';
@@ -28,7 +25,6 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
     if (currentPage > 1) onPageChange(currentPage - 1);
   });
 
-  // next button
   const nextBtn = document.createElement('button');
   nextBtn.classList.add('pagination-btn', 'pagination-next');
   nextBtn.textContent = 'Next →';
@@ -37,11 +33,9 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
     if (currentPage < totalPages) onPageChange(currentPage + 1);
   });
 
-  // page numbers
   const pageList = document.createElement('ul');
   pageList.classList.add('pagination-list');
 
-  // logic to show limited page numbers with ellipsis
   const pages = [];
   if (totalPages <= 7) {
     for (let i = 1; i <= totalPages; i++) pages.push(i);
@@ -58,7 +52,6 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   pages.forEach((page) => {
     const li = document.createElement('li');
     li.classList.add('pagination-item');
-
     if (page === '...') {
       const ellipsis = document.createElement('span');
       ellipsis.classList.add('pagination-ellipsis');
@@ -72,7 +65,6 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
       btn.addEventListener('click', () => onPageChange(page));
       li.append(btn);
     }
-
     pageList.append(li);
   });
 
@@ -82,6 +74,14 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   container.append(nav);
 }
 
+// standalone block decorator - renders a preview with 10 pages
 export default function decorate(block) {
+  loadPaginationCSS();
   block.textContent = '';
+  renderPagination(block, 1, 10, (page) => {
+    // update active state on standalone preview
+    block.querySelectorAll('.pagination-page-btn').forEach((btn) => {
+      btn.classList.toggle('active', parseInt(btn.textContent, 10) === page);
+    });
+  });
 }
