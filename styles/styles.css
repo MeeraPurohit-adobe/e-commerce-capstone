@@ -340,3 +340,58 @@ main .section.highlight {
 .centered p {
   margin: 0;
 }
+
+/* Product Listing Page layout */
+.plp-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.5rem 2rem;
+  align-items: start;
+  padding: 1.5rem 2rem 3rem;
+  max-width: 1264px;
+  margin: auto;
+}
+
+/* advance-filter goes to left column spanning all rows */
+.plp-layout .advance-filter-wrapper {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  position: sticky;
+  top: 100px;
+}
+
+/* sort goes to right column row 1 */
+.plp-layout .sort {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* product-listing goes to right column row 2 */
+.plp-layout .product-listing {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+/* pagination goes to right column row 3 */
+.plp-layout .pagination {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* mobile */
+@media (width < 900px) {
+  .plp-layout {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .plp-layout .advance-filter-wrapper,
+  .plp-layout .sort,
+  .plp-layout .product-listing,
+  .plp-layout .pagination {
+    grid-column: 1;
+    grid-row: auto;
+    position: static;
+  }
+}
