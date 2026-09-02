@@ -2,18 +2,19 @@ export default function decorate(block) {
   const row = block.querySelector(':scope > div');
   if (!row) return;
 
-  const col = row.querySelector(':scope > div');
-  if (!col) return;
+  const cols = [...row.querySelectorAll(':scope > div')];
 
-  // wrap content
-  const content = document.createElement('div');
-  content.classList.add('promo-banner-content');
-  content.innerHTML = col.innerHTML;
+  // image column - left
+  if (cols[0]) cols[0].classList.add('promo-banner-image');
+
+  // text column - right
+  if (cols[1]) cols[1].classList.add('promo-banner-text');
+
+  // style first paragraph as label
+  const label = cols[1]?.querySelector('p:first-child');
+  if (label) label.classList.add('promo-banner-label');
 
   // style CTA as button
-  const cta = content.querySelector('a');
+  const cta = cols[1]?.querySelector('a');
   if (cta) cta.classList.add('promo-banner-cta');
-
-  block.textContent = '';
-  block.append(content);
 }
