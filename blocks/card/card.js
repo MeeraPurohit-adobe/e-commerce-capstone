@@ -1,3 +1,13 @@
+async function loadCardCSS() {
+  const cssPath = '/blocks/card/card.css';
+  if (!document.querySelector(`link[href="${cssPath}"]`)) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = cssPath;
+    document.head.append(link);
+  }
+}
+
 function renderStars(rating) {
   const stars = [];
   for (let i = 1; i <= 5; i++) {
@@ -26,6 +36,7 @@ function renderColors(colorsStr) {
 }
 
 export function buildCard(product) {
+  loadCardCSS();
   const card = document.createElement('div');
   card.classList.add('card-item');
 
