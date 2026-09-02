@@ -339,69 +339,97 @@ main .section.highlight {
 .centered p {
   margin: 0;
 }
-
 /* ==============================
    PRODUCT LISTING PAGE
    ============================== */
 .plp-layout {
   max-width: 1264px;
-  margin: auto;
+  margin: 0 auto;
   padding: 1.5rem 2rem 3rem;
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-areas:
-    'filters sort'
-    'filters listing'
-    'filters pagination';
-  gap: 1rem 2rem;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-/* sort - top right */
+/* sort full width - flex end */
+.plp-layout > .sort-wrapper,
 .plp-layout .sort {
-  grid-area: sort;
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 
-/* advance filter - left column */
+/* main content area - filters left, listing right */
+.plp-layout > .advance-filter,
+.plp-layout > .product-listing {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+/* force advance-filter and product-listing side by side */
+.plp-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: auto auto auto;
+}
+
+.plp-layout .sort {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+
 .plp-layout .advance-filter {
-  grid-area: filters;
+  grid-column: 1;
+  grid-row: 1 / 4;
+  align-self: start;
   position: sticky;
   top: 100px;
 }
 
-/* remove borders from advance filter */
-.plp-layout .advance-filter-wrapper {
-  border: none;
-  background: none;
-  padding: 0;
-  box-shadow: none;
-}
-
-/* product listing - right middle */
 .plp-layout .product-listing {
-  grid-area: listing;
+  grid-column: 2;
+  grid-row: 2;
 }
 
-/* pagination - right bottom */
 .plp-layout .pagination {
-  grid-area: pagination;
+  grid-column: 2;
+  grid-row: 3;
+}
+
+/* remove borders */
+.plp-layout .advance-filter-wrapper {
+  border: none !important;
+  background: none !important;
+  padding: 0 !important;
 }
 
 /* mobile */
 @media (width < 900px) {
   .plp-layout {
     grid-template-columns: 1fr;
-    grid-template-areas:
-      'sort'
-      'filters'
-      'listing'
-      'pagination';
-    padding: 1rem;
+  }
+
+  .plp-layout .sort {
+    grid-column: 1;
+    grid-row: 1;
   }
 
   .plp-layout .advance-filter {
+    grid-column: 1;
+    grid-row: 3;
     position: static;
+  }
+
+  .plp-layout .product-listing {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .plp-layout .pagination {
+    grid-column: 1;
+    grid-row: 4;
   }
 }
