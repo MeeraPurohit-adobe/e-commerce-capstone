@@ -186,7 +186,7 @@
 }
 
 .star.full {
-  color: #f5a623;
+  color: #000000;
 }
 
 .star.empty {
@@ -207,7 +207,7 @@
   left: 0;
   width: 50%;
   overflow: hidden;
-  color: #f5a623;
+  color: #000000;
 }
 
 .best-sellers-reviews {

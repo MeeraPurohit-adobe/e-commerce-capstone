@@ -88,7 +88,7 @@ export default function decorate(block) {
       <p class="best-sellers-price">${price}</p>
       <div class="best-sellers-rating">
         <span class="best-sellers-stars">${renderStars(rating)}</span>
-        <span class="best-sellers-reviews">(${reviews})</span>
+        <span class="best-sellers-reviews"> | ${reviews} reviews</span>
       </div>
       <div class="best-sellers-colors">
         <span class="best-sellers-colors-label"></span>
