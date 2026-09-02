@@ -1,0 +1,124 @@
+/* promo banner alt block */
+.promo-banner-alt {
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 2rem auto;
+  max-width: 1264px;
+  border-radius: 16px;
+}
+
+/* two column row */
+.promo-banner-alt > div {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0;
+  min-height: 480px;
+}
+
+/* text column - left */
+.promo-banner-alt-text {
+  flex: 1 1 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 3.5rem 3rem;
+  background-color: #0d4409;
+  border-radius: 16px 0 0 16px;
+}
+
+/* label */
+.promo-banner-alt-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6aeb60;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  width: fit-content;
+}
+
+/* heading */
+.promo-banner-alt-text h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* description */
+.promo-banner-alt-text p {
+  font-size: 1rem;
+  color: #fff;
+  margin: 0;
+  line-height: 1.7;
+  max-width: 380px;
+}
+
+/* CTA button */
+.promo-banner-alt-cta {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: #6aeb60;
+  color: #000;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+}
+
+.promo-banner-alt-cta:hover {
+  background-color: #94ff5e;
+}
+
+/* image column - right */
+.promo-banner-alt-image {
+  flex: 1 1 50%;
+  overflow: hidden;
+  border-radius: 0 16px 16px 0;
+}
+
+.promo-banner-alt-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* mobile */
+@media (width < 900px) {
+  .promo-banner-alt {
+    border-radius: 12px;
+  }
+
+  .promo-banner-alt > div {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .promo-banner-alt-image {
+    height: 300px;
+    order: -1;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .promo-banner-alt-text {
+    padding: 2rem 1.5rem;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .promo-banner-alt-text h2 {
+    font-size: 1.75rem;
+  }
+
+  .promo-banner-alt-text p {
+    max-width: 100%;
+  }
+}
