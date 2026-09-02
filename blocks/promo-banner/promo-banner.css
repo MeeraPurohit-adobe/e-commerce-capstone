@@ -13,8 +13,8 @@
   justify-content: space-between;
   max-width: 1264px;
   margin: auto;
-  padding: 3rem 2rem;
-  gap: 2rem;
+  padding: 3rem 4rem;
+  gap: 3rem;
 }
 
 /* image column - left */
@@ -28,9 +28,10 @@
 .promo-banner-image img {
   width: 100%;
   height: auto;
-  max-height: 480px;
+  max-height: 500px;
   object-fit: contain;
   display: block;
+  border-radius: 8px;
 }
 
 /* text column - right */
@@ -38,43 +39,44 @@
   flex: 1 1 50%;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
   padding-left: 2rem;
 }
 
-/* label */
+/* label pill */
 .promo-banner-label {
   display: inline-block;
   background-color: #94ff5e;
   color: #1a3c2e;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  padding: 0.3rem 0.9rem;
+  padding: 0.3rem 1rem;
   border-radius: 20px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   width: fit-content;
   margin: 0;
 }
 
 /* heading */
 .promo-banner-text h2 {
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   font-weight: 700;
   color: #1a3c2e;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 /* subtext */
 .promo-banner-text p {
   font-size: 1rem;
-  color: #444;
+  color: #555;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
+  max-width: 420px;
 }
 
-/* highlight */
+/* strong text */
 .promo-banner-text strong {
   color: #1a3c2e;
   font-weight: 700;
@@ -83,7 +85,7 @@
 /* CTA button */
 .promo-banner-cta {
   display: inline-block;
-  padding: 0.75rem 2rem;
+  padding: 0.8rem 2.25rem;
   background-color: #1a3c2e;
   color: #fff;
   text-decoration: none;
@@ -92,7 +94,7 @@
   border-radius: 4px;
   transition: background 0.2s ease;
   align-self: flex-start;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .promo-banner-cta:hover {
@@ -104,6 +106,7 @@
   .promo-banner > div {
     flex-direction: column;
     padding: 2rem 1.5rem;
+    gap: 2rem;
   }
 
   .promo-banner-text {
