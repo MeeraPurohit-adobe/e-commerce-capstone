@@ -1,75 +1,123 @@
 /* promo banner block */
 .promo-banner {
   width: 100%;
-  background-color: #1a3c2e;
-  padding: 4rem 2rem;
+  background-color: #ebffdf;
   box-sizing: border-box;
+  overflow: hidden;
+}
+
+.promo-banner > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1264px;
+  margin: auto;
+  padding: 3rem 4rem;
+  gap: 3rem;
+}
+
+/* image column - left */
+.promo-banner-image {
+  flex: 1 1 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
 }
 
-/* content wrapper */
-.promo-banner-content {
-  max-width: 640px;
+.promo-banner-image img {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+/* text column - right */
+.promo-banner-text {
+  flex: 1 1 50%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  padding-left: 2rem;
+}
+
+/* label pill */
+.promo-banner-label {
+  display: inline-block;
+  background-color: #94ff5e;
+  color: #1a3c2e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: fit-content;
+  margin: 0;
 }
 
 /* heading */
-.promo-banner-content h2 {
-  font-size: 2.5rem;
+.promo-banner-text h2 {
+  font-size: 2.75rem;
   font-weight: 700;
-  color: #fff;
+  color: #1a3c2e;
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 /* subtext */
-.promo-banner-content p {
+.promo-banner-text p {
   font-size: 1rem;
-  color: rgb(255 255 255 / 80%);
+  color: #555;
   margin: 0;
-  line-height: 1.6;
+  line-height: 1.7;
+  max-width: 420px;
 }
 
-/* highlight code */
-.promo-banner-content strong {
-  color: #94ff5e;
+/* strong text */
+.promo-banner-text strong {
+  color: #1a3c2e;
+  font-weight: 700;
 }
 
 /* CTA button */
 .promo-banner-cta {
   display: inline-block;
-  padding: 0.75rem 2.5rem;
-  background-color: #94ff5e;
-  color: #1a3c2e;
+  padding: 0.8rem 2.25rem;
+  background-color: #1a3c2e;
+  color: #fff;
   text-decoration: none;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 0.95rem;
   border-radius: 4px;
-  transition: background 0.2s ease, color 0.2s ease;
-  margin-top: 0.5rem;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+  margin-top: 0.25rem;
 }
 
 .promo-banner-cta:hover {
-  background-color: #7de050;
+  background-color: #0f2a1e;
 }
 
 /* mobile */
 @media (width < 900px) {
-  .promo-banner {
-    padding: 2.5rem 1.5rem;
+  .promo-banner > div {
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    gap: 2rem;
   }
 
-  .promo-banner-content h2 {
+  .promo-banner-text {
+    padding-left: 0;
+  }
+
+  .promo-banner-text h2 {
     font-size: 1.75rem;
   }
 
-  .promo-banner-content p {
-    font-size: 0.9rem;
+  .promo-banner-image {
+    width: 100%;
   }
 }
