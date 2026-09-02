@@ -1,0 +1,207 @@
+/* our plants block */
+.our-plants {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4rem 2rem;
+  max-width: 1264px;
+  margin: auto;
+}
+
+/* header section */
+.our-plants-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* heading */
+.our-plants-heading h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* description + button on same line */
+.our-plants-desc-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+/* description text */
+.our-plants-desc {
+  font-size: 0.875rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.6;
+  flex: 1 1 auto;
+  max-width: 680px;
+}
+
+/* Shop All CTA button */
+.our-plants-cta {
+  display: inline-block;
+  padding: 0.65rem 1.75rem;
+  background-color: #1a3c2e;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+  flex: 0 0 auto;
+}
+
+.our-plants-cta:hover {
+  background-color: #0f2a1e;
+}
+
+/* carousel wrapper */
+.our-plants-carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* scrollable track */
+.our-plants-track {
+  display: flex;
+  flex-direction: row;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0 1rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1 1 auto;
+}
+
+.our-plants-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* prev / next buttons */
+.our-plants-prev,
+.our-plants-next {
+  flex: 0 0 auto;
+  background: #fff;
+  border: 1.5px solid #222;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  z-index: 1;
+}
+
+.our-plants-prev:hover,
+.our-plants-next:hover {
+  background: #222;
+  color: #fff;
+}
+
+/* individual plant card */
+.our-plants-card {
+  flex: 0 0 220px;
+  scroll-snap-align: start;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease;
+}
+
+.our-plants-card:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+}
+
+/* card image */
+.our-plants-card-img {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.our-plants-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.our-plants-card:hover .our-plants-card-img img {
+  transform: scale(1.05);
+}
+
+/* card details */
+.our-plants-card-details {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* plant name */
+.our-plants-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a3c2e;
+  margin: 0;
+}
+
+/* plant description */
+.our-plants-card-desc {
+  font-size: 0.78rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* plant price */
+.our-plants-card-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a3c2e;
+  margin: 0.25rem 0 0;
+}
+
+/* mobile */
+@media (width < 900px) {
+  .our-plants {
+    padding: 2.5rem 1rem;
+  }
+
+  .our-plants-desc-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .our-plants-desc {
+    max-width: 100%;
+  }
+
+  .our-plants-card {
+    flex: 0 0 180px;
+  }
+
+  .our-plants-card-img {
+    height: 160px;
+  }
+}
