@@ -360,11 +360,29 @@ main .section.highlight {
 }
 
 /* sort - top right */
+/* sort - far right aligned */
 .plp-layout.section > .sort-wrapper {
   grid-area: sort;
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  padding-right: 0;
+  margin-left: auto;
+  width: 100%;
+}
+
+.plp-layout.section > .sort-wrapper .sort-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.plp-layout.section .sort-label {
+  white-space: nowrap;
+}
+
+.plp-layout.section .sort-select {
+  margin-left: 0.5rem;
 }
 
 /* advance filter - left, sticky */
