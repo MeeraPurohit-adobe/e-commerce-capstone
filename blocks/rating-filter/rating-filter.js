@@ -40,7 +40,7 @@ export function renderRatingFilter(container, onChange) {
     const starsWrapper = document.createElement('span');
     starsWrapper.classList.add('rating-filter-stars');
 
-    for (let i = 1; i <= 5; i++) {
+    for (let i = 1; i <= 5; i+1) {
       const star = document.createElement('span');
       star.classList.add('rating-star');
       star.textContent = i <= rating ? '★' : '☆';
