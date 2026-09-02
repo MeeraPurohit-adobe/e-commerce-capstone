@@ -1,8 +1,15 @@
 function renderStars(rating) {
-  const full = Math.floor(rating);
-  const half = rating % 1 >= 0.5;
-  const empty = 5 - full - (half ? 1 : 0);
-  return `${'★'.repeat(full)}${half ? '½' : ''}${'☆'.repeat(empty)}`;
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(rating)) {
+      stars.push('<span class="star full">★</span>');
+    } else if (i === Math.ceil(rating) && rating % 1 >= 0.5) {
+      stars.push('<span class="star half">★</span>');
+    } else {
+      stars.push('<span class="star empty">☆</span>');
+    }
+  }
+  return stars.join('');
 }
 
 function renderColors(colorsStr) {
@@ -84,7 +91,7 @@ export default function decorate(block) {
         <span class="best-sellers-reviews">(${reviews})</span>
       </div>
       <div class="best-sellers-colors">
-        <span class="best-sellers-colors-label">Colors:</span>
+        <span class="best-sellers-colors-label"></span>
         ${renderColors(colors)}
       </div>
       <p class="best-sellers-stock">Only ${stock} left in stock</p>

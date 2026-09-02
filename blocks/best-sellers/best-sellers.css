@@ -173,9 +173,41 @@
 }
 
 .best-sellers-stars {
+  display: flex;
+  flex-direction: row;
+  gap: 1px;
+}
+
+.star {
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  color: #ddd;
+}
+
+.star.full {
   color: #f5a623;
-  font-size: 0.9rem;
-  letter-spacing: 1px;
+}
+
+.star.empty {
+  color: #ddd;
+}
+
+/* half star - fills only left 50% in gold */
+.star.half {
+  color: #ddd;
+  position: relative;
+  display: inline-block;
+}
+
+.star.half::before {
+  content: '★';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+  color: #f5a623;
 }
 
 .best-sellers-reviews {
@@ -225,12 +257,12 @@
   display: block;
   width: 100%;
   padding: 0.65rem 1rem;
-  background-color: #1a3c2e;
+  background-color: #000000;
   color: #fff;
   text-decoration: none;
   font-weight: 700;
   font-size: 0.88rem;
-  border-radius: 8px;
+  border-radius: 27px;
   text-align: center;
   margin-top: auto;
   padding-top: 0.65rem;
@@ -239,7 +271,7 @@
 }
 
 .best-sellers-cart:hover {
-  background-color: #0f2a1e;
+  background-color: #000000;
 }
 
 /* mobile */
