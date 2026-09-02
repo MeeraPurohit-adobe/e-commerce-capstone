@@ -51,8 +51,19 @@ export default async function decorate(block) {
       // get all sorted records from sort.js
       const allData = await getSortedData(DATA_URL);
       const totalRecords = allData.length;
-      const countSpan = document.querySelector('#product-count');
-      if (countSpan) countSpan.textContent = `(${totalRecords})`;
+      // after calculating totalRecords, find h1 and update it
+      const h1 = block.querySelector('h1');
+      if (h1) {
+        // remove existing count span if any
+        const existingCount = h1.querySelector('.product-count');
+        if (existingCount) existingCount.remove();
+
+        // add new count span
+        const countSpan = document.createElement('span');
+        countSpan.classList.add('product-count');
+        countSpan.textContent = `(${totalRecords})`;
+        h1.append(countSpan);
+      }
       const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
 
       // slice for current page
