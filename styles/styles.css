@@ -428,3 +428,112 @@ main .section.highlight {
     position: static;
   }
 }
+
+/* mobile filter button */
+.plp-filter-btn {
+  display: none;
+}
+
+@media (width < 900px) {
+  /* show filter button on mobile */
+  .plp-filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: #1a3c2e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+
+  .plp-filter-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: #fff;
+  }
+
+  /* hide filter on mobile by default */
+  .plp-layout.section > .advance-filter-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    max-width: 320px;
+    height: 100dvh;
+    background: #fff;
+    z-index: 999;
+    overflow-y: auto;
+    padding: 1.5rem;
+    box-shadow: 4px 0 20px rgb(0 0 0 / 15%);
+    transition: transform 0.3s ease;
+    transform: translateX(-100%);
+  }
+
+  /* show filter drawer when open */
+  .plp-layout.section > .advance-filter-wrapper.filter-open {
+    display: block;
+    transform: translateX(0);
+  }
+
+  /* overlay behind drawer */
+  .plp-filter-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgb(0 0 0 / 50%);
+    z-index: 998;
+  }
+
+  .plp-filter-overlay.active {
+    display: block;
+  }
+
+  /* close button inside drawer */
+  .plp-filter-close {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .plp-filter-close h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a3c2e;
+    margin: 0;
+  }
+
+  .plp-filter-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+    padding: 0;
+    line-height: 1;
+  }
+
+  /* mobile grid - single column */
+  .plp-layout.section {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'sort'
+      'listing'
+      'pagination';
+    padding: 1rem;
+  }
+
+  .plp-layout.section > .advance-filter-wrapper {
+    grid-area: unset;
+    position: fixed;
+  }
+}

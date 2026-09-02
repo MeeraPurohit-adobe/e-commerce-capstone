@@ -29,6 +29,72 @@ export default async function decorate(block) {
   cardsSection.innerHTML = '<p class="product-listing-loading">Loading plants...</p>';
 
   block.textContent = '';
+  // add mobile filter button
+  const section = block.closest('.section');
+  if (section) {
+    const filterBtn = document.createElement('button');
+    filterBtn.classList.add('plp-filter-btn');
+    filterBtn.innerHTML = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <path d="M4 6h16M7 12h10M10 18h4"/>
+    </svg>
+    Filters
+  `;
+
+    // overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('plp-filter-overlay');
+
+    const advanceFilter = section.querySelector('.advance-filter-wrapper');
+
+    // add close button inside filter drawer
+    if (advanceFilter) {
+      const closeRow = document.createElement('div');
+      closeRow.classList.add('plp-filter-close');
+
+      const closeTitle = document.createElement('h3');
+      closeTitle.textContent = 'Filters';
+
+      const closeBtn = document.createElement('button');
+      closeBtn.classList.add('plp-filter-close-btn');
+      closeBtn.setAttribute('aria-label', 'Close filters');
+      closeBtn.textContent = '✕';
+      closeBtn.addEventListener('click', () => {
+        advanceFilter.classList.remove('filter-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      closeRow.append(closeTitle);
+      closeRow.append(closeBtn);
+      advanceFilter.prepend(closeRow);
+    }
+
+    // open filter drawer
+    filterBtn.addEventListener('click', () => {
+      if (advanceFilter) advanceFilter.classList.add('filter-open');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+
+    // close on overlay click
+    overlay.addEventListener('click', () => {
+      if (advanceFilter) advanceFilter.classList.remove('filter-open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    // close filter drawer on filter change
+    window.addEventListener('filters-changed', () => {
+      if (advanceFilter) advanceFilter.classList.remove('filter-open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+
+    section.prepend(overlay);
+    headingWrapper.append(filterBtn);
+    document.body.append(overlay);
+  }
   block.append(headingWrapper);
   block.append(cardsSection);
 
