@@ -1,17 +1,104 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
+function renderStars(rating) {
+  const stars = [];
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(rating)) {
+      stars.push('<span class="star full">★</span>');
+    } else if (i === Math.ceil(rating) && rating % 1 >= 0.5) {
+      stars.push('<span class="star half">★</span>');
+    } else {
+      stars.push('<span class="star empty">☆</span>');
+    }
+  }
+  return stars.join('');
+}
+
+function renderColors(colorsStr) {
+  if (!colorsStr) return '';
+  return colorsStr.split(',').map((c) => {
+    const color = c.trim();
+    return `<button 
+      class="card-color-dot" 
+      style="background:${color.toLowerCase()}" 
+      title="${color}" 
+      aria-label="${color}">
+    </button>`;
+  }).join('');
+}
+
+export function buildCard(product) {
+  const card = document.createElement('div');
+  card.classList.add('card-item');
+
+  // heart wishlist button
+  const heart = document.createElement('button');
+  heart.classList.add('card-heart');
+  heart.setAttribute('aria-label', 'Add to wishlist');
+  heart.innerHTML = '&#9825;';
+  heart.addEventListener('click', () => {
+    heart.classList.toggle('active');
+    heart.innerHTML = heart.classList.contains('active') ? '&#9829;' : '&#9825;';
+  });
+
+  // image
+  const imgWrapper = document.createElement('div');
+  imgWrapper.classList.add('card-img');
+  imgWrapper.innerHTML = `<img src="${product.image}" alt="${product.name}" loading="lazy">`;
+
+  // details
+  const details = document.createElement('div');
+  details.classList.add('card-details');
+  details.innerHTML = `
+    <p class="card-name">${product.name}</p>
+    <p class="card-type">${product.type}</p>
+    <p class="card-price">${product.price}</p>
+    <div class="card-rating">
+      <span class="card-stars">${renderStars(parseFloat(product.rating))}</span>
+      <span class="card-reviews"> | ${product.reviews} reviews</span>
+    </div>
+    <div class="card-colors">
+      ${renderColors(product.colors)}
+    </div>
+    <p class="card-stock">Only ${product.stock} left in stock</p>
+  `;
+
+  // Add to Cart button
+  const btn = document.createElement('a');
+  btn.href = product.link || '#';
+  btn.textContent = 'Add to Cart';
+  btn.classList.add('card-cta');
+  details.append(btn);
+
+  card.append(heart);
+  card.append(imgWrapper);
+  card.append(details);
+
+  return card;
+}
 
 export default function decorate(block) {
-  /* change to ul, li */
-  const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
-    const li = document.createElement('li');
-    while (row.firstElementChild) li.append(row.firstElementChild);
-    [...li.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'cards-card-image';
-      else div.className = 'cards-card-body';
-    });
-    ul.append(li);
-  });
-  ul.querySelectorAll('picture > img').forEach((img) => img.closest('picture').replaceWith(createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }])));
-  block.replaceChildren(ul);
+  const rows = [...block.querySelectorAll(':scope > div')];
+  if (!rows.length) return;
+
+  const cols = [...rows[0].querySelectorAll(':scope > div')];
+  const imgCol = cols[0];
+  const dataCol = cols[1];
+  if (!dataCol) return;
+
+  // read data from block content
+  const paras = [...dataCol.querySelectorAll('p')];
+  const product = {
+    image: imgCol?.querySelector('img')?.src || '',
+    name: paras[0]?.textContent.trim() || '',
+    type: paras[1]?.textContent.trim() || '',
+    price: paras[2]?.textContent.trim() || '',
+    rating: paras[3]?.textContent.trim() || '0',
+    reviews: paras[4]?.textContent.trim() || '0',
+    colors: paras[5]?.textContent.trim() || '',
+    stock: paras[6]?.textContent.trim() || '0',
+    link: dataCol.querySelector('a')?.href || '#',
+  };
+
+  const card = buildCard(product);
+  block.textContent = '';
+  block.append(card);
 }
