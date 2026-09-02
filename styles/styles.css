@@ -340,56 +340,51 @@ main .section.highlight {
   margin: 0;
 }
 
-/* Product Listing Page layout */
+/* ==============================
+   PRODUCT LISTING PAGE
+   ============================== */
 .plp-layout {
+  max-width: 1264px;
+  margin: auto;
+  padding: 1.5rem 2rem 3rem;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 240px 1fr;
   grid-template-areas:
-    'heading heading'
     'filters sort'
-    'filters cards'
+    'filters listing'
     'filters pagination';
   gap: 1rem 2rem;
   align-items: start;
-  padding: 1.5rem 2rem 3rem;
-  max-width: 1264px;
-  margin: auto;
 }
 
-/* Plants heading — spans full width at top */
-.plp-layout .product-listing {
-  grid-area: heading;
-}
-
-.plp-layout .product-listing .product-listing-heading-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 1rem;
-}
-
-/* sort — top right */
+/* sort - top right */
 .plp-layout .sort {
   grid-area: sort;
   display: flex;
   justify-content: flex-end;
 }
 
-/* filters — left column */
+/* advance filter - left column */
 .plp-layout .advance-filter {
   grid-area: filters;
   position: sticky;
   top: 100px;
 }
 
-/* cards — right middle */
-.plp-layout .product-listing-cards {
-  grid-area: cards;
+/* remove borders from advance filter */
+.plp-layout .advance-filter-wrapper {
+  border: none;
+  background: none;
+  padding: 0;
+  box-shadow: none;
 }
 
-/* pagination — right bottom */
+/* product listing - right middle */
+.plp-layout .product-listing {
+  grid-area: listing;
+}
+
+/* pagination - right bottom */
 .plp-layout .pagination {
   grid-area: pagination;
 }
@@ -399,10 +394,9 @@ main .section.highlight {
   .plp-layout {
     grid-template-columns: 1fr;
     grid-template-areas:
-      'heading'
       'sort'
       'filters'
-      'cards'
+      'listing'
       'pagination';
     padding: 1rem;
   }
