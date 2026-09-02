@@ -75,7 +75,7 @@ export function applyFilters(data, filters) {
 function updateURLAndNotify(params) {
   const url = new URL(window.location.href);
   Object.entries(params).forEach(([key, value]) => {
-    if (value && value.length) {
+    if (value && (Array.isArray(value) ? value.length : value !== '')) {
       url.searchParams.set(key, Array.isArray(value) ? value.join(',') : value);
     } else {
       url.searchParams.delete(key);
@@ -106,27 +106,6 @@ export default async function decorate(block) {
   const wrapper = document.createElement('div');
   wrapper.classList.add('advance-filter-wrapper');
 
-  // header
-  const header = document.createElement('div');
-  header.classList.add('advance-filter-header');
-
-  const title = document.createElement('h3');
-  title.classList.add('advance-filter-title');
-  title.textContent = 'Filters';
-
-  const resetBtn = document.createElement('button');
-  resetBtn.classList.add('advance-filter-reset');
-  resetBtn.textContent = 'Reset';
-
-  header.append(title);
-  header.append(resetBtn);
-  wrapper.append(header);
-
-  // divider
-  const divider = document.createElement('hr');
-  divider.classList.add('advance-filter-divider');
-  wrapper.append(divider);
-
   // filter containers
   const categoryContainer = document.createElement('div');
   const featuresContainer = document.createElement('div');
@@ -147,7 +126,7 @@ export default async function decorate(block) {
     });
   }
 
-  // render all filters
+  // render all 6 filters dynamically from data
   renderCategoryFilter(categoryContainer, allData, onFilterChange);
   renderFeaturesFilter(featuresContainer, allData, onFilterChange);
   renderLightFilter(lightContainer, allData, onFilterChange);
@@ -155,7 +134,10 @@ export default async function decorate(block) {
   renderPriceFilter(priceContainer, allData, onFilterChange);
   renderRatingFilter(ratingContainer, onFilterChange);
 
-  // reset button
+  // reset button at the bottom
+  const resetBtn = document.createElement('button');
+  resetBtn.classList.add('advance-filter-reset');
+  resetBtn.textContent = 'Reset';
   resetBtn.addEventListener('click', () => {
     resetCategoryFilter(categoryContainer);
     resetFeaturesFilter(featuresContainer);
@@ -174,12 +156,14 @@ export default async function decorate(block) {
     });
   });
 
+  // append all to wrapper
   wrapper.append(categoryContainer);
   wrapper.append(featuresContainer);
   wrapper.append(lightContainer);
   wrapper.append(sizeContainer);
   wrapper.append(priceContainer);
   wrapper.append(ratingContainer);
+  wrapper.append(resetBtn);
 
   block.append(wrapper);
 }

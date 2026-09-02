@@ -345,53 +345,70 @@ main .section.highlight {
 .plp-layout {
   display: grid;
   grid-template-columns: 260px 1fr;
-  grid-template-rows: auto 1fr auto;
-  gap: 1.5rem 2rem;
+  grid-template-areas:
+    'heading heading'
+    'filters sort'
+    'filters cards'
+    'filters pagination';
+  gap: 1rem 2rem;
   align-items: start;
   padding: 1.5rem 2rem 3rem;
   max-width: 1264px;
   margin: auto;
 }
 
-/* advance-filter goes to left column spanning all rows */
-.plp-layout .advance-filter-wrapper {
-  grid-column: 1;
-  grid-row: 1 / -1;
+/* Plants heading — spans full width at top */
+.plp-layout .product-listing {
+  grid-area: heading;
+}
+
+.plp-layout .product-listing .product-listing-heading-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+}
+
+/* sort — top right */
+.plp-layout .sort {
+  grid-area: sort;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* filters — left column */
+.plp-layout .advance-filter {
+  grid-area: filters;
   position: sticky;
   top: 100px;
 }
 
-/* sort goes to right column row 1 */
-.plp-layout .sort {
-  grid-column: 2;
-  grid-row: 1;
+/* cards — right middle */
+.plp-layout .product-listing-cards {
+  grid-area: cards;
 }
 
-/* product-listing goes to right column row 2 */
-.plp-layout .product-listing {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-/* pagination goes to right column row 3 */
+/* pagination — right bottom */
 .plp-layout .pagination {
-  grid-column: 2;
-  grid-row: 3;
+  grid-area: pagination;
 }
 
 /* mobile */
 @media (width < 900px) {
   .plp-layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'heading'
+      'sort'
+      'filters'
+      'cards'
+      'pagination';
     padding: 1rem;
   }
 
-  .plp-layout .advance-filter-wrapper,
-  .plp-layout .sort,
-  .plp-layout .product-listing,
-  .plp-layout .pagination {
-    grid-column: 1;
-    grid-row: auto;
+  .plp-layout .advance-filter {
     position: static;
   }
 }
