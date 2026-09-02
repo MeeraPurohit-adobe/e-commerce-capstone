@@ -1,0 +1,37 @@
+/* light filter */
+.light-filter-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.light-filter-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.light-filter-btn {
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid #ddd;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #444;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.light-filter-btn:hover {
+  border-color: #1a3c2e;
+  color: #1a3c2e;
+}
+
+.light-filter-btn.active {
+  background: #1a3c2e;
+  border-color: #1a3c2e;
+  color: #fff;
+}
