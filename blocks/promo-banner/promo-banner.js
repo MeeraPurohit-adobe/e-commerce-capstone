@@ -10,11 +10,11 @@ export default function decorate(block) {
   // text column - right
   if (cols[1]) cols[1].classList.add('promo-banner-text');
 
-  // style first paragraph as label
-  const label = cols[1]?.querySelector('p:first-child');
-  if (label) label.classList.add('promo-banner-label');
+  // first p = label
+  const paras = cols[1]?.querySelectorAll('p');
+  if (paras && paras[0]) paras[0].classList.add('promo-banner-label');
 
-  // style CTA as button
+  // last p containing link = CTA
   const cta = cols[1]?.querySelector('a');
   if (cta) cta.classList.add('promo-banner-cta');
 }
