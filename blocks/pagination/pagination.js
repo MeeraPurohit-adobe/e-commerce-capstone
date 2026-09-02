@@ -15,7 +15,6 @@ function getPageFromURL() {
 
 function goToPage(page, totalPages, onPageChange) {
   if (page < 1 || page > totalPages) return;
-  // update URL with new page
   const url = new URL(window.location.href);
   url.searchParams.set('page', page);
   window.history.pushState({}, '', url);
@@ -31,21 +30,18 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   nav.classList.add('pagination');
   nav.setAttribute('aria-label', 'pagination');
 
-  // prev button
   const prevBtn = document.createElement('button');
   prevBtn.classList.add('pagination-btn', 'pagination-prev');
   prevBtn.textContent = '← Prev';
   prevBtn.disabled = currentPage === 1;
   prevBtn.addEventListener('click', () => goToPage(currentPage - 1, totalPages, onPageChange));
 
-  // next button
   const nextBtn = document.createElement('button');
   nextBtn.classList.add('pagination-btn', 'pagination-next');
   nextBtn.textContent = 'Next →';
   nextBtn.disabled = currentPage === totalPages;
   nextBtn.addEventListener('click', () => goToPage(currentPage + 1, totalPages, onPageChange));
 
-  // page numbers with ellipsis
   const pageList = document.createElement('ul');
   pageList.classList.add('pagination-list');
 
@@ -91,13 +87,26 @@ export default async function decorate(block) {
   loadPaginationCSS();
   block.textContent = '';
 
-  // fetch total records to calculate total pages
-  try {
-    const resp = await fetch('/data/plants-listing.json?offset=0&limit=1');
-    if (!resp.ok) throw new Error('Failed to fetch');
-    const json = await resp.json();
-    const totalRecords = json.total || 100;
-    const totalPages = Math.ceil(totalRecords / 10);
+  const PAGE_SIZE = 10;
+
+  async function initPagination() {
+    // wait for product-listing to store total records
+    let totalRecords = parseInt(sessionStorage.getItem('total-records') || '0', 10);
+
+    // if not yet set, fetch total from sheet
+    if (!totalRecords) {
+      try {
+        const resp = await fetch('/data/plants-listing.json?limit=1000');
+        if (!resp.ok) throw new Error('Failed');
+        const json = await resp.json();
+        totalRecords = (json.data || []).length;
+        sessionStorage.setItem('total-records', totalRecords);
+      } catch (e) {
+        totalRecords = 100;
+      }
+    }
+
+    const totalPages = Math.ceil(totalRecords / PAGE_SIZE);
     let currentPage = getPageFromURL();
 
     function onPageChange(newPage) {
@@ -113,8 +122,8 @@ export default async function decorate(block) {
       currentPage = getPageFromURL();
       renderPagination(block, currentPage, totalPages, onPageChange);
     });
-
-  } catch (e) {
-    block.innerHTML = '<p>Failed to load pagination.</p>';
   }
+
+  // small delay to allow product-listing to set sessionStorage first
+  setTimeout(initPagination, 100);
 }

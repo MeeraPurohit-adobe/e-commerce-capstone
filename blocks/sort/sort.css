@@ -1,0 +1,49 @@
+/* sort block */
+.sort {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 1264px;
+  margin: auto;
+  padding: 1rem 2rem 0;
+}
+
+.sort-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.sort-label {
+  font-size: 0.875rem;
+  color: #555;
+  white-space: nowrap;
+}
+
+.sort-select {
+  padding: 0.45rem 0.85rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: #333;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.sort-select:focus {
+  border-color: #1a3c2e;
+}
+
+/* mobile */
+@media (width < 600px) {
+  .sort {
+    padding: 0.75rem 1rem 0;
+  }
+
+  .sort-wrapper {
+    justify-content: flex-start;
+  }
+}
