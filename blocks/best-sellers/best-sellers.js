@@ -29,7 +29,7 @@ export default async function decorate(block) {
 
   try {
     // fetch from sheet
-    const resp = await fetch('/data/best-sellers.json');
+    const resp = await fetch('/data/plants-listing.json?limit=6');
     if (!resp.ok) throw new Error('Failed to fetch');
     const json = await resp.json();
     const products = json.data || [];

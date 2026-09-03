@@ -172,4 +172,31 @@ export default async function decorate(block) {
   navWrapper.append(promo);
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // update cart icon count from session storage
+  const updateCartCount = () => {
+    try {
+      const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const cartIcon = navWrapper.querySelector('a[href="#cart"]')
+        || navWrapper.querySelector('a[aria-label="Cart"]');
+
+      if (cartIcon && totalQty > 0) {
+        cartIcon.style.position = 'relative';
+        cartIcon.style.display = 'inline-flex';
+        let badge = cartIcon.querySelector('.cart-badge');
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.classList.add('cart-badge');
+          cartIcon.append(badge);
+        }
+        badge.textContent = totalQty;
+        badge.style.display = 'flex';
+      }
+    } catch (e) {
+      // fail silently
+    }
+  };
+
+  updateCartCount();
 }
