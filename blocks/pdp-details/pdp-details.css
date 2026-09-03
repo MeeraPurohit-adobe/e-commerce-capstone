@@ -362,7 +362,6 @@
 }
 
 /* wishlist button */
-/* wishlist button - circular to match card heart */
 .pdp-wishlist-btn {
   flex-shrink: 0;
   width: 36px;
@@ -372,7 +371,7 @@
   justify-content: center;
   background: #fff;
   border: 1.5px solid #ddd;
-  border-radius: 50%;
+  border-radius: 6px;
   font-size: 1.1rem;
   cursor: pointer;
   color: #888;
