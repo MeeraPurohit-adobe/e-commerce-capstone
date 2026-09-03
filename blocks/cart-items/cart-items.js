@@ -48,7 +48,7 @@ function buildCartRow(item, onUpdate) {
   const row = document.createElement('div');
   row.classList.add('cart-item-row');
 
-  // thumbnail image
+  // thumbnail
   const imgWrapper = document.createElement('div');
   imgWrapper.classList.add('cart-item-thumb');
   const img = document.createElement('img');
@@ -95,7 +95,6 @@ function buildCartRow(item, onUpdate) {
   function updateButtons() {
     minusBtn.disabled = parseInt(qtyInput.value, 10) <= 1;
   }
-
   updateButtons();
 
   minusBtn.addEventListener('click', () => {
@@ -170,11 +169,27 @@ function buildCartRow(item, onUpdate) {
 export default function decorate(block) {
   loadCSS();
 
-  const wrapper = document.createElement('div');
-  wrapper.classList.add('cart-items-wrapper');
+  // read column headers from HTML
+  const headerRow = block.querySelector(':scope > div');
+  const headers = [...(headerRow?.querySelectorAll('p') || [])].map((p) => p.textContent.trim());
+
+  // build header
+  const header = document.createElement('div');
+  header.classList.add('cart-items-header');
+  headers.forEach((text) => {
+    const span = document.createElement('span');
+    span.textContent = text;
+    header.append(span);
+  });
+  // extra span for delete column
+  header.append(document.createElement('span'));
+
+  // items container
+  const itemsContainer = document.createElement('div');
+  itemsContainer.classList.add('cart-items-container');
 
   function renderItems() {
-    wrapper.textContent = '';
+    itemsContainer.textContent = '';
     const cart = getCart();
 
     if (!cart.length) {
@@ -186,28 +201,18 @@ export default function decorate(block) {
         <p class="cart-empty-text">Looks like you haven't added anything yet.</p>
         <a href="/products/product-listing-page" class="cart-empty-btn">Start Shopping</a>
       `;
-      wrapper.append(empty);
+      itemsContainer.append(empty);
       return;
     }
 
-    // header row
-    const header = document.createElement('div');
-    header.classList.add('cart-items-header');
-    header.innerHTML = `
-      <span>Product</span>
-      <span></span>
-      <span>Quantity</span>
-      <span></span>
-    `;
-    wrapper.append(header);
-
-    // items
     cart.forEach((item) => {
-      wrapper.append(buildCartRow(item, renderItems));
+      itemsContainer.append(buildCartRow(item, renderItems));
     });
   }
 
-  renderItems();
   block.textContent = '';
-  block.append(wrapper);
+  block.append(header);
+  block.append(itemsContainer);
+
+  renderItems();
 }
