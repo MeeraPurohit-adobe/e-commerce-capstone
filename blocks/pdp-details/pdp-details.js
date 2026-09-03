@@ -1,5 +1,3 @@
-import { renderStars } from '../card/card.js';
-
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -33,6 +31,50 @@ function showAddToCartSuccess(btn) {
   }, 2000);
 }
 
+function buildQuantitySelector() {
+  const wrapper = document.createElement('div');
+  wrapper.classList.add('pdp-quantity');
+
+  const minusBtn = document.createElement('button');
+  minusBtn.classList.add('pdp-quantity-btn');
+  minusBtn.setAttribute('aria-label', 'Decrease quantity');
+  minusBtn.textContent = '−';
+
+  const input = document.createElement('input');
+  input.type = 'number';
+  input.classList.add('pdp-quantity-input');
+  input.value = '1';
+  input.min = '1';
+  input.max = '99';
+  input.setAttribute('aria-label', 'Quantity');
+
+  const plusBtn = document.createElement('button');
+  plusBtn.classList.add('pdp-quantity-btn');
+  plusBtn.setAttribute('aria-label', 'Increase quantity');
+  plusBtn.textContent = '+';
+
+  minusBtn.addEventListener('click', () => {
+    const val = parseInt(input.value, 10);
+    if (val > 1) input.value = val - 1;
+  });
+
+  plusBtn.addEventListener('click', () => {
+    const val = parseInt(input.value, 10);
+    if (val < 99) input.value = val + 1;
+  });
+
+  input.addEventListener('change', () => {
+    const val = parseInt(input.value, 10);
+    if (val < 1) input.value = 1;
+    if (val > 99) input.value = 99;
+  });
+
+  wrapper.append(minusBtn);
+  wrapper.append(input);
+  wrapper.append(plusBtn);
+  return wrapper;
+}
+
 export default async function decorate(block) {
   loadCSS();
 
@@ -53,9 +95,7 @@ export default async function decorate(block) {
 
     // update breadcrumb dynamically
     const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
-    if (breadcrumbName) {
-      breadcrumbName.textContent = product.name;
-    }
+    if (breadcrumbName) breadcrumbName.textContent = product.name;
 
     const wrapper = document.createElement('div');
     wrapper.classList.add('pdp-details-wrapper');
@@ -158,11 +198,34 @@ export default async function decorate(block) {
     stock.classList.add('pdp-stock');
     stock.textContent = `Only ${product.stock} left in stock`;
 
-    // ── ADD TO CART ──
+    // ── QUANTITY + ADD TO CART row ──
+    const cartRow = document.createElement('div');
+    cartRow.classList.add('pdp-cart-row');
+
+    const quantitySelector = buildQuantitySelector();
+
     const cartBtn = document.createElement('button');
     cartBtn.classList.add('pdp-cart-btn');
     cartBtn.textContent = 'Add to Cart';
     cartBtn.addEventListener('click', () => showAddToCartSuccess(cartBtn));
+
+    cartRow.append(quantitySelector);
+    cartRow.append(cartBtn);
+
+    // ── DESCRIPTION after Add to Cart ──
+    const descSection = document.createElement('div');
+    descSection.classList.add('pdp-description');
+
+    const descTitle = document.createElement('h3');
+    descTitle.classList.add('pdp-description-title');
+    descTitle.textContent = 'Description';
+
+    const descText = document.createElement('p');
+    descText.classList.add('pdp-description-text');
+    descText.textContent = product.description || 'No description available.';
+
+    descSection.append(descTitle);
+    descSection.append(descText);
 
     // ── ASSEMBLE ──
     wrapper.append(name);
@@ -173,7 +236,8 @@ export default async function decorate(block) {
     wrapper.append(colorsSection);
     wrapper.append(sizesSection);
     wrapper.append(stock);
-    wrapper.append(cartBtn);
+    wrapper.append(cartRow);
+    wrapper.append(descSection);
 
     block.textContent = '';
     block.append(wrapper);
