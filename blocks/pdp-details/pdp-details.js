@@ -14,12 +14,26 @@ function getProductIdFromURL() {
 }
 
 async function fetchProductData(productId) {
-  const resp = await fetch('/data/plants-listing.json?limit=1000');
-  if (!resp.ok) throw new Error('Failed to fetch');
-  const json = await resp.json();
-  const products = json.data || [];
-  // match by numeric id
-  return products.find((p) => String(p.id) === String(productId)) || null;
+  try {
+    const resp = await fetch('/data/plants-listing.json?limit=1000');
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const json = await resp.json();
+    const products = json.data || [];
+
+    // debug — log first product to check structure
+    if (products.length) {
+      // eslint-disable-next-line no-console
+      console.log('First product:', products[0]);
+      // eslint-disable-next-line no-console
+      console.log('Looking for id:', productId, typeof productId);
+    }
+
+    return products.find((p) => String(p.id) === String(productId)) || null;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Fetch error:', e);
+    return null;
+  }
 }
 
 function showAddToCartSuccess(btn) {
