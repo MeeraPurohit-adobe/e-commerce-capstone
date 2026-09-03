@@ -1,4 +1,5 @@
 import { renderStars } from '../card/card.js';
+import { addToCart, updateCartIcon } from '../../scripts/cart-utils.js';
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -124,8 +125,8 @@ export default async function decorate(block) {
 
     // update breadcrumb - try multiple times to handle async rendering
     const updateBreadcrumb = () => {
-    const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
-    if (breadcrumbName) {
+      const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
+      if (breadcrumbName) {
         breadcrumbName.textContent = product.name;
         // remove hidden class if breadcrumb item was hidden
         const li = breadcrumbName.closest('.breadcrumb-item');
@@ -253,7 +254,22 @@ export default async function decorate(block) {
     const cartBtn = document.createElement('button');
     cartBtn.classList.add('pdp-cart-btn');
     cartBtn.textContent = 'Add to Cart';
-    cartBtn.addEventListener('click', () => showAddToCartSuccess(cartBtn));
+    cartBtn.addEventListener('click', () => {
+      const quantity = parseInt(
+        document.querySelector('.pdp-quantity-input')?.value || '1',
+        10,
+      );
+      addToCart({ ...product, quantity });
+
+      // show success feedback
+      const original = cartBtn.textContent;
+      cartBtn.textContent = '✓ Added to Cart!';
+      cartBtn.classList.add('pdp-cart-btn--success');
+      setTimeout(() => {
+        cartBtn.textContent = original;
+        cartBtn.classList.remove('pdp-cart-btn--success');
+      }, 2000);
+    });
 
     // wishlist heart button
     const wishlistBtn = document.createElement('button');
@@ -300,8 +316,8 @@ export default async function decorate(block) {
     block.append(wrapper);
 
   } catch (e) {
-  // eslint-disable-next-line no-console
-  console.error('pdp-details decorate error:', e.message, e.stack);
-  block.innerHTML = `<p class="pdp-details-error">Error: ${e.message}</p>`;
-}
+    // eslint-disable-next-line no-console
+    console.error('pdp-details decorate error:', e.message, e.stack);
+    block.innerHTML = `<p class="pdp-details-error">Error: ${e.message}</p>`;
+  }
 }

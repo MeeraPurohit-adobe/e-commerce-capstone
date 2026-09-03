@@ -1,3 +1,4 @@
+import { addToCart, updateCartIcon } from '../../scripts/cart-utils.js';
 function loadCardCSS() {
   const cssPath = '/blocks/card/card.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -76,14 +77,109 @@ export function buildCard(product) {
   `;
 
   // Add to Cart button — navigates to PDP
+  // Add to Cart button
   const btn = document.createElement('a');
   btn.href = '#';
   btn.textContent = 'Add to Cart';
   btn.classList.add('card-cta');
+
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.href = `/products/product-detail-page?id=${product.id}`;
+
+    // save to cart
+    addToCart({ ...product, quantity: 1 });
+
+    // replace button with quantity selector
+    const qtyWrapper = document.createElement('div');
+    qtyWrapper.classList.add('card-qty-wrapper');
+
+    const minusBtn = document.createElement('button');
+    minusBtn.classList.add('card-qty-btn');
+    minusBtn.textContent = '−';
+    minusBtn.setAttribute('aria-label', 'Decrease quantity');
+
+    const qtyInput = document.createElement('input');
+    qtyInput.type = 'number';
+    qtyInput.classList.add('card-qty-input');
+    qtyInput.value = '1';
+    qtyInput.min = '0';
+    qtyInput.max = product.stock || '99';
+
+    const plusBtn = document.createElement('button');
+    plusBtn.classList.add('card-qty-btn');
+    plusBtn.textContent = '+';
+    plusBtn.setAttribute('aria-label', 'Increase quantity');
+
+    function updateButtons() {
+      minusBtn.disabled = parseInt(qtyInput.value, 10) <= 1;
+      plusBtn.disabled = parseInt(qtyInput.value, 10) >= parseInt(product.stock || 99, 10);
+    }
+
+    minusBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const val = parseInt(qtyInput.value, 10);
+      if (val > 1) {
+        qtyInput.value = val - 1;
+        updateButtons();
+        const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const existing = cart.find((item) => String(item.id) === String(product.id));
+        if (existing) {
+          existing.quantity = val - 1;
+          sessionStorage.setItem('cart', JSON.stringify(cart));
+          updateCartIcon();
+        }
+      } else {
+        // remove from cart and revert to Add to Cart button
+        const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const updated = cart.filter((item) => String(item.id) !== String(product.id));
+        sessionStorage.setItem('cart', JSON.stringify(updated));
+        updateCartIcon();
+        qtyWrapper.replaceWith(btn);
+      }
+    });
+
+    plusBtn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      const val = parseInt(qtyInput.value, 10);
+      const max = parseInt(product.stock || 99, 10);
+      if (val < max) {
+        qtyInput.value = val + 1;
+        updateButtons();
+        const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const existing = cart.find((item) => String(item.id) === String(product.id));
+        if (existing) {
+          existing.quantity = val + 1;
+          sessionStorage.setItem('cart', JSON.stringify(cart));
+          updateCartIcon();
+        }
+      }
+    });
+
+    qtyInput.addEventListener('change', (ev) => {
+      ev.stopPropagation();
+      let val = parseInt(qtyInput.value, 10);
+      if (val <= 0) {
+        const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+        const updated = cart.filter((item) => String(item.id) !== String(product.id));
+        sessionStorage.setItem('cart', JSON.stringify(updated));
+        updateCartIcon();
+        qtyWrapper.replaceWith(btn);
+        return;
+      }
+      const max = parseInt(product.stock || 99, 10);
+      if (val > max) val = max;
+      qtyInput.value = val;
+      updateButtons();
+    });
+
+    qtyWrapper.append(minusBtn);
+    qtyWrapper.append(qtyInput);
+    qtyWrapper.append(plusBtn);
+
+    btn.replaceWith(qtyWrapper);
+    updateButtons();
   });
+
   details.append(btn);
 
   card.append(heart);
