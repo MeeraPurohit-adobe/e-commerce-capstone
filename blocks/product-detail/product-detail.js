@@ -1,7 +1,7 @@
 import { renderStars } from '../card/card.js';
 
 function loadCSS() {
-  const cssPath = '/blocks/pdp-details/product-detail.css';
+  const cssPath = '/blocks/product-detail/product-detail.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
