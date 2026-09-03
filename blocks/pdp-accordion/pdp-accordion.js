@@ -18,7 +18,8 @@ async function fetchProductData(productId) {
   if (!resp.ok) throw new Error('Failed to fetch');
   const json = await resp.json();
   const products = json.data || [];
-  return products.find((p) => p.name.toLowerCase().replace(/ /g, '-') === productId);
+  // match by numeric id
+  return products.find((p) => String(p.id) === String(productId)) || null;
 }
 
 function buildAccordionItem(title, content, accordion) {

@@ -8,7 +8,7 @@ async function fetchProductData(productId) {
   if (!resp.ok) throw new Error('Failed to fetch');
   const json = await resp.json();
   const products = json.data || [];
-  return products.find((p) => p.name.toLowerCase().replace(/ /g, '-') === productId);
+  return products.find((p) => String(p.id) === String(productId)) || null;
 }
 
 export default async function decorate(block) {
