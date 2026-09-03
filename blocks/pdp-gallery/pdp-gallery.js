@@ -1,6 +1,8 @@
 function getProductIdFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('id') || '';
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const id = params.get('id');
+  return id || '';
 }
 
 async function fetchProductData(productId) {

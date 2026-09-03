@@ -1,3 +1,4 @@
+import { renderStars } from '../card/card.js';
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -9,29 +10,22 @@ function loadCSS() {
 }
 
 function getProductIdFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('id') || '';
+  const search = window.location.search;
+  const params = new URLSearchParams(search);
+  const id = params.get('id');
+  return id || '';
 }
 
 async function fetchProductData(productId) {
   try {
     const resp = await fetch('/data/plants-listing.json?limit=1000');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    if (!resp.ok) throw new Error(`HTTP error: ${resp.status}`);
     const json = await resp.json();
     const products = json.data || [];
-
-    // debug — log first product to check structure
-    if (products.length) {
-      // eslint-disable-next-line no-console
-      console.log('First product:', products[0]);
-      // eslint-disable-next-line no-console
-      console.log('Looking for id:', productId, typeof productId);
-    }
-
     return products.find((p) => String(p.id) === String(productId)) || null;
   } catch (e) {
     // eslint-disable-next-line no-console
-    console.error('Fetch error:', e);
+    console.error('fetchProductData error:', e.message);
     return null;
   }
 }
@@ -46,7 +40,9 @@ function showAddToCartSuccess(btn) {
   }, 2000);
 }
 
-function buildQuantitySelector() {
+function buildQuantitySelector(stock) {
+  const maxQty = parseInt(stock, 10) || 99;
+
   const wrapper = document.createElement('div');
   wrapper.classList.add('pdp-quantity');
 
@@ -60,7 +56,7 @@ function buildQuantitySelector() {
   input.classList.add('pdp-quantity-input');
   input.value = '1';
   input.min = '1';
-  input.max = '99';
+  input.max = maxQty;
   input.setAttribute('aria-label', 'Quantity');
 
   const plusBtn = document.createElement('button');
@@ -68,20 +64,38 @@ function buildQuantitySelector() {
   plusBtn.setAttribute('aria-label', 'Increase quantity');
   plusBtn.textContent = '+';
 
+  // update button states
+  function updateButtons() {
+    const val = parseInt(input.value, 10);
+    minusBtn.disabled = val <= 1;
+    plusBtn.disabled = val >= maxQty;
+  }
+
+  // initial state - minus disabled at 1
+  updateButtons();
+
   minusBtn.addEventListener('click', () => {
     const val = parseInt(input.value, 10);
-    if (val > 1) input.value = val - 1;
+    if (val > 1) {
+      input.value = val - 1;
+      updateButtons();
+    }
   });
 
   plusBtn.addEventListener('click', () => {
     const val = parseInt(input.value, 10);
-    if (val < 99) input.value = val + 1;
+    if (val < maxQty) {
+      input.value = val + 1;
+      updateButtons();
+    }
   });
 
   input.addEventListener('change', () => {
-    const val = parseInt(input.value, 10);
-    if (val < 1) input.value = 1;
-    if (val > 99) input.value = 99;
+    let val = parseInt(input.value, 10);
+    if (val < 1) val = 1;
+    if (val > maxQty) val = maxQty;
+    input.value = val;
+    updateButtons();
   });
 
   wrapper.append(minusBtn);
@@ -108,9 +122,20 @@ export default async function decorate(block) {
       return;
     }
 
-    // update breadcrumb dynamically
+    // update breadcrumb - try multiple times to handle async rendering
+    const updateBreadcrumb = () => {
     const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
-    if (breadcrumbName) breadcrumbName.textContent = product.name;
+    if (breadcrumbName) {
+        breadcrumbName.textContent = product.name;
+        // remove hidden class if breadcrumb item was hidden
+        const li = breadcrumbName.closest('.breadcrumb-item');
+        if (li) li.classList.remove('breadcrumb-hidden');
+      }
+    };
+
+    updateBreadcrumb();
+    setTimeout(updateBreadcrumb, 300);
+    setTimeout(updateBreadcrumb, 800);
 
     const wrapper = document.createElement('div');
     wrapper.classList.add('pdp-details-wrapper');
@@ -128,11 +153,16 @@ export default async function decorate(block) {
     starsSpan.classList.add('pdp-stars');
     starsSpan.innerHTML = renderStars(parseFloat(product.rating));
 
+    const separator = document.createElement('span');
+    separator.classList.add('pdp-rating-separator');
+    separator.textContent = '|';
+
     const reviewCount = document.createElement('span');
     reviewCount.classList.add('pdp-review-count');
-    reviewCount.textContent = `(${product.reviews} reviews)`;
+    reviewCount.textContent = `${product.reviews} reviews`;
 
     ratingRow.append(starsSpan);
+    ratingRow.append(separator);
     ratingRow.append(reviewCount);
 
     // ── PRICE ──
@@ -214,18 +244,30 @@ export default async function decorate(block) {
     stock.textContent = `Only ${product.stock} left in stock`;
 
     // ── QUANTITY + ADD TO CART row ──
+    // ── QUANTITY + ADD TO CART + WISHLIST ──
     const cartRow = document.createElement('div');
     cartRow.classList.add('pdp-cart-row');
 
-    const quantitySelector = buildQuantitySelector();
+    const quantitySelector = buildQuantitySelector(product.stock);
 
     const cartBtn = document.createElement('button');
     cartBtn.classList.add('pdp-cart-btn');
     cartBtn.textContent = 'Add to Cart';
     cartBtn.addEventListener('click', () => showAddToCartSuccess(cartBtn));
 
+    // wishlist heart button
+    const wishlistBtn = document.createElement('button');
+    wishlistBtn.classList.add('pdp-wishlist-btn');
+    wishlistBtn.setAttribute('aria-label', 'Add to wishlist');
+    wishlistBtn.innerHTML = '&#9825;';
+    wishlistBtn.addEventListener('click', () => {
+      wishlistBtn.classList.toggle('active');
+      wishlistBtn.innerHTML = wishlistBtn.classList.contains('active') ? '&#9829;' : '&#9825;';
+    });
+
     cartRow.append(quantitySelector);
     cartRow.append(cartBtn);
+    cartRow.append(wishlistBtn);
 
     // ── DESCRIPTION after Add to Cart ──
     const descSection = document.createElement('div');
@@ -258,6 +300,8 @@ export default async function decorate(block) {
     block.append(wrapper);
 
   } catch (e) {
-    block.innerHTML = '<p class="pdp-details-error">Failed to load product details.</p>';
-  }
+  // eslint-disable-next-line no-console
+  console.error('pdp-details decorate error:', e.message, e.stack);
+  block.innerHTML = `<p class="pdp-details-error">Error: ${e.message}</p>`;
+}
 }
