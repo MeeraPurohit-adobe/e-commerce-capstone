@@ -1,6 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import  decorateCartItems  from '../cart-items/cart-items.js';
+import decorateCartItems from '../cart-items/cart-items.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -173,7 +173,6 @@ function buildCartOverlay() {
           itemsContainer.append(fragmentContent.firstElementChild);
         }
 
-        // use imported decorateCartItems
         const cartBlock = itemsContainer.querySelector('.cart-items');
         if (cartBlock) decorateCartItems(cartBlock);
 
@@ -188,7 +187,13 @@ function buildCartOverlay() {
     panel.classList.add('open');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
-    loadCartFragment();
+
+    if (!fragmentLoaded) {
+      loadCartFragment();
+    } else {
+      // fragment already loaded - just dispatch cart-updated to re-render
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+    }
   }
 
   function closePanel() {
@@ -277,15 +282,22 @@ export default async function decorate(block) {
     try {
       const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
       const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+      // try multiple selectors
       const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-        || navWrapper.querySelector('[aria-label="Cart"]');
+        || navWrapper.querySelector('span[aria-label="Cart"]')
+        || navWrapper.querySelector('.nav-tools p:last-of-type span')
+        || navWrapper.querySelector('.nav-tools p:last-of-type');
+
       if (cartIcon) {
+        cartIcon.style.cursor = 'pointer';
+        cartIcon.style.position = 'relative';
+        cartIcon.style.display = 'inline-flex';
+
         let badge = cartIcon.querySelector('.cart-badge');
         if (!badge) {
           badge = document.createElement('span');
           badge.classList.add('cart-badge');
-          cartIcon.style.position = 'relative';
-          cartIcon.style.display = 'inline-flex';
           cartIcon.append(badge);
         }
         badge.textContent = totalQty;
@@ -297,14 +309,19 @@ export default async function decorate(block) {
   };
 
   // ── CART OVERLAY ──
+  // find cart icon after nav is built
   const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-    || navWrapper.querySelector('[aria-label="Cart"]');
+    || navWrapper.querySelector('span[aria-label="Cart"]')
+    || navWrapper.querySelector('.nav-tools p:last-of-type span')
+    || navWrapper.querySelector('.nav-tools p:last-of-type');
+
+  // always listen for cart updates regardless of icon found
+  window.addEventListener('cart-updated', updateCartCount);
 
   if (cartIcon) {
     cartIcon.style.cursor = 'pointer';
     const { openPanel } = buildCartOverlay();
     cartIcon.addEventListener('click', openPanel);
-    window.addEventListener('cart-updated', updateCartCount);
   }
 
   updateCartCount();

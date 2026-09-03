@@ -56,7 +56,9 @@ export function addToCart(product) {
   }
 
   saveCart(cart);
-  updateCartIcon();
+
+  // dispatch AFTER save
+  window.dispatchEvent(new CustomEvent('cart-updated'));
 }
 // update on page load
 document.addEventListener('DOMContentLoaded', updateCartIcon);

@@ -207,8 +207,7 @@ export default function decorate(block) {
         <p class="cart-empty-icon">🛒</p>
         <p class="cart-empty-title">Your cart is empty</p>
         <p class="cart-empty-text">Looks like you haven't added anything yet.</p>
-        <a href="/products/product-listing-page" class="cart-empty-btn">Start Shopping</a>
-      `;
+        <a href="/products/product-listing-page" class="cart-empty-btn">Continue Shopping</a>`;
       itemsContainer.append(empty);
       return;
     }
@@ -223,4 +222,11 @@ export default function decorate(block) {
   block.append(itemsContainer);
 
   renderItems();
+
+  // re-render when cart changes - use timeout to ensure DOM is ready
+  window.addEventListener('cart-updated', () => {
+    setTimeout(() => {
+      renderItems();
+    }, 50);
+  });
 }
