@@ -9,6 +9,10 @@ function loadCardCSS() {
   }
 }
 
+function dispatchCartUpdate() {
+  window.dispatchEvent(new CustomEvent('cart-updated'));
+}
+
 export function renderStars(rating) {
   const stars = [];
   for (let i = 1; i <= 5; i += 1) {
@@ -127,13 +131,14 @@ export function buildCard(product) {
           existing.quantity = val - 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
           updateCartIcon();
+          dispatchCartUpdate(); 
         }
       } else {
-        // remove from cart and revert to Add to Cart button
         const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
         updateCartIcon();
+        dispatchCartUpdate(); 
         qtyWrapper.replaceWith(btn);
       }
     });
@@ -151,6 +156,7 @@ export function buildCard(product) {
           existing.quantity = val + 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
           updateCartIcon();
+          dispatchCartUpdate(); 
         }
       }
     });
@@ -163,6 +169,7 @@ export function buildCard(product) {
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
         updateCartIcon();
+        dispatchCartUpdate(); 
         qtyWrapper.replaceWith(btn);
         return;
       }
@@ -170,6 +177,14 @@ export function buildCard(product) {
       if (val > max) val = max;
       qtyInput.value = val;
       updateButtons();
+      const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const existing = cart.find((item) => String(item.id) === String(product.id));
+      if (existing) {
+        existing.quantity = val;
+        sessionStorage.setItem('cart', JSON.stringify(cart));
+        updateCartIcon();
+        dispatchCartUpdate(); 
+      }
     });
 
     qtyWrapper.append(minusBtn);
