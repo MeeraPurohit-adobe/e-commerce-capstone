@@ -8,7 +8,7 @@ function loadCSS() {
   }
 }
 
-export function renderRatingFilter(container, onChange) {
+export function renderRatingFilter(container, filteredData, onChange) {
   loadCSS();
   container.textContent = '';
 
@@ -25,16 +25,19 @@ export function renderRatingFilter(container, onChange) {
   const list = document.createElement('div');
   list.classList.add('rating-filter-list');
 
-  // show 5 down to 1
   [5, 4, 3, 2, 1].forEach((rating) => {
+    const count = filteredData.filter((p) => parseFloat(p.rating) >= rating).length;
+
     const label = document.createElement('label');
     label.classList.add('rating-filter-label');
+    if (count === 0 && !selected.includes(rating)) label.classList.add('disabled');
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = rating;
     checkbox.classList.add('rating-filter-checkbox');
     checkbox.checked = selected.includes(rating);
+    checkbox.disabled = count === 0 && !selected.includes(rating);
     checkbox.addEventListener('change', () => onChange());
 
     const starsWrapper = document.createElement('span');
@@ -52,9 +55,14 @@ export function renderRatingFilter(container, onChange) {
     text.classList.add('rating-filter-text');
     text.textContent = rating < 5 ? '& Up' : 'Only';
 
+    const countSpan = document.createElement('span');
+    countSpan.classList.add('filter-count');
+    countSpan.textContent = `(${count})`;
+
     label.append(checkbox);
     label.append(starsWrapper);
     label.append(text);
+    label.append(countSpan);
     list.append(label);
   });
 

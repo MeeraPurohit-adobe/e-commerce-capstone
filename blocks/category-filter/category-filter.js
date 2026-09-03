@@ -13,12 +13,12 @@ function getSelected() {
   return params.get('categories') ? params.get('categories').split(',') : [];
 }
 
-export function renderCategoryFilter(container, allData, onChange) {
+export function renderCategoryFilter(container, filteredData, allData, onChange) {
   loadCSS();
   container.textContent = '';
 
-  // extract unique categories from data
-  const categories = [...new Set(allData.map((p) => p.categories).filter(Boolean))].sort();
+  // get unique categories from ALL data but show count from filtered
+  const allCategories = [...new Set(allData.map((p) => p.categories).filter(Boolean))].sort();
   const selected = getSelected();
 
   const wrapper = document.createElement('div');
@@ -31,22 +31,32 @@ export function renderCategoryFilter(container, allData, onChange) {
   const list = document.createElement('div');
   list.classList.add('category-filter-list');
 
-  categories.forEach((cat) => {
+  allCategories.forEach((cat) => {
+    // count how many in filtered data
+    const count = filteredData.filter((p) => p.categories === cat).length;
+
     const label = document.createElement('label');
     label.classList.add('category-filter-label');
+    if (count === 0 && !selected.includes(cat)) label.classList.add('disabled');
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.value = cat;
     checkbox.classList.add('category-filter-checkbox');
     checkbox.checked = selected.includes(cat);
+    checkbox.disabled = count === 0 && !selected.includes(cat);
     checkbox.addEventListener('change', () => onChange());
 
     const span = document.createElement('span');
     span.textContent = cat;
 
+    const countSpan = document.createElement('span');
+    countSpan.classList.add('filter-count');
+    countSpan.textContent = `(${count})`;
+
     label.append(checkbox);
     label.append(span);
+    label.append(countSpan);
     list.append(label);
   });
 
@@ -66,9 +76,4 @@ export function resetCategoryFilter(container) {
 export default function decorate(block) {
   loadCSS();
   block.textContent = '';
-  const placeholder = document.createElement('p');
-  placeholder.textContent = 'Category filter loads dynamically from data.';
-  placeholder.style.fontSize = '0.85rem';
-  placeholder.style.color = '#888';
-  block.append(placeholder);
 }

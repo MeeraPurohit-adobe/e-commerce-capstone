@@ -8,12 +8,11 @@ function loadCSS() {
   }
 }
 
-export function renderLightFilter(container, allData, onChange) {
+export function renderLightFilter(container, filteredData, allData, onChange) {
   loadCSS();
   container.textContent = '';
 
-  // extract unique store values from data
-  const stores = [...new Set(allData.map((p) => p.store).filter(Boolean))].sort();
+  const allStores = [...new Set(allData.map((p) => p.store).filter(Boolean))].sort();
   const params = new URLSearchParams(window.location.search);
   const selected = params.get('lights') ? params.get('lights').split(',') : [];
 
@@ -27,15 +26,22 @@ export function renderLightFilter(container, allData, onChange) {
   const btnRow = document.createElement('div');
   btnRow.classList.add('light-filter-buttons');
 
-  stores.forEach((store) => {
+  allStores.forEach((store) => {
+    const count = filteredData.filter((p) => p.store === store).length;
+
     const btn = document.createElement('button');
     btn.classList.add('light-filter-btn');
     btn.textContent = store;
     btn.dataset.value = store;
     if (selected.includes(store)) btn.classList.add('active');
+    if (count === 0 && !selected.includes(store)) btn.classList.add('disabled');
+    btn.disabled = count === 0 && !selected.includes(store);
+
     btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-      onChange();
+      if (!btn.disabled) {
+        btn.classList.toggle('active');
+        onChange();
+      }
     });
     btnRow.append(btn);
   });
