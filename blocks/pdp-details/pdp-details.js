@@ -51,6 +51,10 @@ export default async function decorate(block) {
       return;
     }
 
+    // update breadcrumb with product name
+    const breadcrumbName = document.getElementById('pdp-breadcrumb-name');
+    if (breadcrumbName) breadcrumbName.textContent = product.name;
+
     const wrapper = document.createElement('div');
     wrapper.classList.add('pdp-details-wrapper');
 
@@ -153,6 +157,21 @@ export default async function decorate(block) {
     cartBtn.textContent = 'Add to Cart';
     cartBtn.addEventListener('click', () => showAddToCartSuccess(cartBtn));
 
+    // ── DESCRIPTION (after Add to Cart) ──
+    const descSection = document.createElement('div');
+    descSection.classList.add('pdp-description');
+
+    const descTitle = document.createElement('h3');
+    descTitle.classList.add('pdp-description-title');
+    descTitle.textContent = 'Description';
+
+    const descText = document.createElement('p');
+    descText.classList.add('pdp-description-text');
+    descText.textContent = product.description || 'No description available.';
+
+    descSection.append(descTitle);
+    descSection.append(descText);
+
     // ── ASSEMBLE ──
     wrapper.append(name);
     wrapper.append(ratingRow);
@@ -162,6 +181,7 @@ export default async function decorate(block) {
     wrapper.append(sizesSection);
     wrapper.append(stock);
     wrapper.append(cartBtn);
+    wrapper.append(descSection);
 
     block.textContent = '';
     block.append(wrapper);
