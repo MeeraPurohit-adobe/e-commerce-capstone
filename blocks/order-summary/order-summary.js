@@ -182,5 +182,5 @@ export default function decorate(block) {
   renderSummary();
 
   // update when cart changes
-  window.addEventListener('storage', renderSummary);
+  window.addEventListener('cart-updated', renderSummary);
 }

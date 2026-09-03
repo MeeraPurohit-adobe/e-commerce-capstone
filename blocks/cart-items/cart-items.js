@@ -20,6 +20,10 @@ function saveCart(cart) {
   sessionStorage.setItem('cart', JSON.stringify(cart));
 }
 
+function dispatchCartUpdate() {
+  window.dispatchEvent(new CustomEvent('cart-updated'));
+}
+
 function updateCartIcon() {
   try {
     const cart = getCart();
@@ -108,6 +112,7 @@ function buildCartRow(item, onUpdate) {
         saveCart(cart);
         updateCartIcon();
         updateButtons();
+        dispatchCartUpdate();
         onUpdate();
       }
     }
@@ -123,6 +128,7 @@ function buildCartRow(item, onUpdate) {
       saveCart(cart);
       updateCartIcon();
       updateButtons();
+      dispatchCartUpdate();
       onUpdate();
     }
   });
@@ -138,6 +144,7 @@ function buildCartRow(item, onUpdate) {
       saveCart(cart);
       updateCartIcon();
       updateButtons();
+      dispatchCartUpdate();
       onUpdate();
     }
   });
@@ -155,6 +162,7 @@ function buildCartRow(item, onUpdate) {
     const cart = getCart().filter((i) => String(i.id) !== String(item.id));
     saveCart(cart);
     updateCartIcon();
+    dispatchCartUpdate();
     onUpdate();
   });
 
@@ -181,7 +189,7 @@ export default function decorate(block) {
     span.textContent = text;
     header.append(span);
   });
-  // extra span for delete column
+  // extra empty span for delete column
   header.append(document.createElement('span'));
 
   // items container
