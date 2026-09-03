@@ -17,7 +17,6 @@ export default function decorate(block) {
     const link = item.querySelector('a');
 
     if (link && !isLast) {
-      // linked item with separator
       const a = document.createElement('a');
       a.href = link.href;
       a.textContent = link.textContent.trim();
@@ -30,11 +29,20 @@ export default function decorate(block) {
       sep.textContent = '›';
       li.append(sep);
     } else {
-      // current page - no link
       const span = document.createElement('span');
       span.classList.add('breadcrumb-current');
+
+      // check if it has pdp-breadcrumb-name class
+      if (item.classList.contains('pdp-breadcrumb-name')) {
+        span.classList.add('pdp-breadcrumb-name');
+      }
+
       span.setAttribute('aria-current', 'page');
       span.textContent = item.textContent.trim();
+
+      // hide if empty - will be populated by pdp-details.js
+      if (!span.textContent) li.classList.add('breadcrumb-hidden');
+
       li.append(span);
     }
 
