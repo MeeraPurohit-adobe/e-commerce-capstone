@@ -1,0 +1,165 @@
+/* order summary block */
+.order-summary-wrapper {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  top: 100px;
+}
+
+/* title */
+.order-summary-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+/* summary row */
+.order-summary-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.order-summary-label {
+  color: #555;
+}
+
+.order-summary-value {
+  font-weight: 500;
+  color: #333;
+}
+
+/* total row */
+.order-summary-total {
+  font-size: 1rem;
+  font-weight: 700;
+  padding-top: 0.5rem;
+}
+
+.order-summary-total .order-summary-label {
+  color: #000;
+  font-weight: 700;
+}
+
+.order-summary-total .order-summary-value {
+  color: #1a3c2e;
+  font-size: 1.1rem;
+}
+
+/* promo applied row */
+.order-summary-promo-applied .order-summary-value {
+  color: #1a9c2e;
+}
+
+/* divider */
+.order-summary-divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 0.25rem 0;
+}
+
+/* promo code section */
+.order-summary-promo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-summary-promo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.order-summary-promo-row {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.order-summary-promo-input {
+  flex: 1 1 auto;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.order-summary-promo-input:focus {
+  border-color: #1a3c2e;
+}
+
+.order-summary-promo-input.valid {
+  border-color: #1a9c2e;
+  background: #f0fff0;
+}
+
+.order-summary-promo-input.invalid {
+  border-color: #e00;
+  background: #fff0f0;
+}
+
+.order-summary-promo-btn {
+  padding: 0.5rem 1rem;
+  background: #1a3c2e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.order-summary-promo-btn:hover {
+  background: #0f2a1e;
+}
+
+/* checkout button */
+.order-summary-checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 0.875rem;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.order-summary-checkout-btn:hover {
+  background: #222;
+}
+
+/* continue shopping button */
+.order-summary-continue-btn {
+  display: block;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.order-summary-continue-btn:hover {
+  color: #1a3c2e;
+}
