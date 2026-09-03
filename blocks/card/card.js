@@ -8,7 +8,7 @@ function loadCardCSS() {
   }
 }
 
-function renderStars(rating) {
+export function renderStars(rating) {
   const stars = [];
   for (let i = 1; i <= 5; i += 1) {
     if (i <= Math.floor(rating)) {
