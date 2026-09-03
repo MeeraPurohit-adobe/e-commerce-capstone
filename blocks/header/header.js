@@ -165,7 +165,9 @@ function buildCartOverlay() {
 
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-      const fragmentContent = doc.querySelector('main');
+
+      // plain.html returns main content directly
+      const fragmentContent = doc.querySelector('main') || doc.body;
 
       if (fragmentContent) {
         itemsContainer.textContent = '';
@@ -173,12 +175,23 @@ function buildCartOverlay() {
           itemsContainer.append(fragmentContent.firstElementChild);
         }
 
+        // find and decorate the cart-items block
         const cartBlock = itemsContainer.querySelector('.cart-items');
-        if (cartBlock) decorateCartItems(cartBlock);
 
-        fragmentLoaded = true;
+        // eslint-disable-next-line no-console
+        console.log('cart block found:', cartBlock);
+
+        if (cartBlock) {
+          decorateCartItems(cartBlock);
+          fragmentLoaded = true;
+        } else {
+          // eslint-disable-next-line no-console
+          console.log('cart-items block not found, innerHTML:', itemsContainer.innerHTML);
+        }
       }
     } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('loadCartFragment error:', e);
       itemsContainer.innerHTML = '<p class="cart-overlay-empty">Failed to load cart.</p>';
     }
   }

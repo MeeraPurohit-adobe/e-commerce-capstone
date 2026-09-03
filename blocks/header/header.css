@@ -257,7 +257,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   position: fixed;
   top: 0;
   right: 0;
-  width: 380px;
+  width: 600px;
   max-width: 100vw;
   height: 100dvh;
   background: #fff;
