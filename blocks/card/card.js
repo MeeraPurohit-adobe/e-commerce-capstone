@@ -1,4 +1,4 @@
-async function loadCardCSS() {
+function loadCardCSS() {
   const cssPath = '/blocks/card/card.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
     const link = document.createElement('link');
@@ -26,19 +26,24 @@ function renderColors(colorsStr) {
   if (!colorsStr) return '';
   return colorsStr.split(',').map((c) => {
     const color = c.trim();
-    return `<button 
-      class="card-color-dot" 
-      style="background:${color.toLowerCase()}" 
-      title="${color}" 
-      aria-label="${color}">
-    </button>`;
+    return `<button class="card-color-dot" style="background:${color.toLowerCase()}" title="${color}" aria-label="${color}"></button>`;
   }).join('');
 }
 
 export function buildCard(product) {
   loadCardCSS();
+
   const card = document.createElement('div');
   card.classList.add('card-item');
+
+  // make card clickable — navigate to product detail page
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', (e) => {
+    // dont navigate if clicking heart or cart button
+    if (e.target.closest('.card-heart') || e.target.closest('.card-cta')) return;
+    const productId = product.name.toLowerCase().replace(/ /g, '-');
+    window.location.href = `/products/product-detail-page?id=${productId}`;
+  });
 
   // heart wishlist button
   const heart = document.createElement('button');
@@ -64,7 +69,7 @@ export function buildCard(product) {
     <p class="card-price">${product.price}</p>
     <div class="card-rating">
       <span class="card-stars">${renderStars(parseFloat(product.rating))}</span>
-      <span class="card-reviews"> | ${product.reviews} reviews</span>
+      <span class="card-reviews">(${product.reviews})</span>
     </div>
     <div class="card-colors">
       ${renderColors(product.colors)}
@@ -72,11 +77,16 @@ export function buildCard(product) {
     <p class="card-stock">Only ${product.stock} left in stock</p>
   `;
 
-  // Add to Cart button
+  // Add to Cart button — navigates to PDP
   const btn = document.createElement('a');
-  btn.href = product.link || '#';
+  btn.href = '#';
   btn.textContent = 'Add to Cart';
   btn.classList.add('card-cta');
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const productId = product.name.toLowerCase().replace(/ /g, '-');
+    window.location.href = `/products/product-detail-page?id=${productId}`;
+  });
   details.append(btn);
 
   card.append(heart);
@@ -87,6 +97,8 @@ export function buildCard(product) {
 }
 
 export default function decorate(block) {
+  loadCardCSS();
+
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
@@ -95,7 +107,6 @@ export default function decorate(block) {
   const dataCol = cols[1];
   if (!dataCol) return;
 
-  // read data from block content
   const paras = [...dataCol.querySelectorAll('p')];
   const product = {
     image: imgCol?.querySelector('img')?.src || '',
