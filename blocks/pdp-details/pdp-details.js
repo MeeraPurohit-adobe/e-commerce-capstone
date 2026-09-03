@@ -23,53 +23,6 @@ async function fetchProductData(productId) {
   return products.find((p) => p.name.toLowerCase().replace(/ /g, '-') === productId);
 }
 
-function buildAccordionItem(title, content) {
-  const item = document.createElement('div');
-  item.classList.add('pdp-accordion-item');
-
-  const header = document.createElement('button');
-  header.classList.add('pdp-accordion-header');
-  header.setAttribute('aria-expanded', 'false');
-
-  const titleSpan = document.createElement('span');
-  titleSpan.textContent = title;
-
-  const icon = document.createElement('span');
-  icon.classList.add('pdp-accordion-icon');
-  icon.textContent = '+';
-
-  header.append(titleSpan);
-  header.append(icon);
-
-  const body = document.createElement('div');
-  body.classList.add('pdp-accordion-body');
-
-  const bodyText = document.createElement('p');
-  bodyText.textContent = content || 'Coming soon...';
-  body.append(bodyText);
-
-  header.addEventListener('click', () => {
-    const isExpanded = header.getAttribute('aria-expanded') === 'true';
-    // close all other accordion items
-    const allItems = item.closest('.pdp-accordion')?.querySelectorAll('.pdp-accordion-item');
-    allItems?.forEach((i) => {
-      if (i !== item) {
-        i.querySelector('.pdp-accordion-header').setAttribute('aria-expanded', 'false');
-        i.querySelector('.pdp-accordion-icon').textContent = '+';
-        i.querySelector('.pdp-accordion-body').classList.remove('open');
-      }
-    });
-    // toggle current
-    header.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-    icon.textContent = isExpanded ? '+' : '−';
-    body.classList.toggle('open', !isExpanded);
-  });
-
-  item.append(header);
-  item.append(body);
-  return item;
-}
-
 function showAddToCartSuccess(btn) {
   const original = btn.textContent;
   btn.textContent = '✓ Added to Cart!';
@@ -171,7 +124,10 @@ export default async function decorate(block) {
     const sizesWrapper = document.createElement('div');
     sizesWrapper.classList.add('pdp-sizes');
 
-    const sizesList = product.size ? product.size.split(',') : ['Small', 'Medium', 'Large'];
+    const sizesList = product.size
+      ? product.size.split(',')
+      : ['Small', 'Medium', 'Large'];
+
     sizesList.forEach((size) => {
       const btn = document.createElement('button');
       btn.classList.add('pdp-size-btn');
@@ -198,19 +154,6 @@ export default async function decorate(block) {
     cartBtn.textContent = 'Add to Cart';
     cartBtn.addEventListener('click', () => showAddToCartSuccess(cartBtn));
 
-    // ── DIVIDER ──
-    const divider2 = document.createElement('hr');
-    divider2.classList.add('pdp-divider');
-
-    // ── ACCORDION ──
-    const accordion = document.createElement('div');
-    accordion.classList.add('pdp-accordion');
-
-    accordion.append(buildAccordionItem('Description', product.description));
-    accordion.append(buildAccordionItem('Care Instructions', product.care));
-    accordion.append(buildAccordionItem('Shipping & Returns', product.shipping));
-    accordion.append(buildAccordionItem('Reviews', `${product.reviews} verified reviews. Average rating ${product.rating} out of 5 stars.`));
-
     // ── ASSEMBLE ──
     wrapper.append(name);
     wrapper.append(ratingRow);
@@ -220,8 +163,6 @@ export default async function decorate(block) {
     wrapper.append(sizesSection);
     wrapper.append(stock);
     wrapper.append(cartBtn);
-    wrapper.append(divider2);
-    wrapper.append(accordion);
 
     block.textContent = '';
     block.append(wrapper);
