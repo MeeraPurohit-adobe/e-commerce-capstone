@@ -15,9 +15,9 @@ export function updateCartIcon() {
   const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   const tryUpdate = () => {
-    const cartIcon = document.querySelector('.nav-tools a[href="#cart"]')
+    const cartIcon = document.querySelector('.nav-tools a[href="/cart/cart"]')
       || document.querySelector('.nav-tools a[aria-label="Cart"]')
-      || document.querySelector('header a[href="#cart"]')
+      || document.querySelector('header a[href="/cart/cart"]')
       || document.querySelector('header a[aria-label="Cart"]');
 
     if (!cartIcon) return false;
