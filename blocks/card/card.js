@@ -38,13 +38,11 @@ export function buildCard(product) {
 
   // make card clickable — navigate to product detail page
   card.style.cursor = 'pointer';
-  card.addEventListener('click', (e) => {
-    // dont navigate if clicking heart or cart button
-    if (e.target.closest('.card-heart') || e.target.closest('.card-cta')) return;
-    const productId = product.name.toLowerCase().replace(/ /g, '-');
-    const productId = product.id || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    window.location.href = `/products/product-detail-page?id=${productId}`;
-  });
+card.addEventListener('click', (e) => {
+  if (e.target.closest('.card-heart') || e.target.closest('.card-cta')) return;
+  const productId = product.id || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  window.location.href = `/products/product-detail-page?id=${productId}`;
+});
 
   // heart wishlist button
   const heart = document.createElement('button');
