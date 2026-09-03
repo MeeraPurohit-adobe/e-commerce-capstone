@@ -9,45 +9,79 @@ export default function decorate(block) {
   const ol = document.createElement('ol');
   ol.classList.add('breadcrumb-list');
 
-  items.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.classList.add('breadcrumb-item');
+  // check if this is a PDP breadcrumb
+  const isPDP = items.length === 1 && items[0]?.textContent.trim() === 'pdp';
 
-    const isLast = index === items.length - 1;
-    const link = item.querySelector('a');
+  if (isPDP) {
+    // build PDP breadcrumb dynamically
+    const pdpItems = [
+      { label: 'Home', href: '/' },
+      { label: 'Products', href: '/products/product-listing-page' },
+      { label: 'Product Detail', href: '/products/product-detail-page' },
+      { label: '', href: null, className: 'pdp-breadcrumb-name' },
+    ];
 
-    if (link && !isLast) {
-      const a = document.createElement('a');
-      a.href = link.href;
-      a.textContent = link.textContent.trim();
-      a.classList.add('breadcrumb-link');
-      li.append(a);
+    pdpItems.forEach(({ label, href, className }) => {
+      const li = document.createElement('li');
+      li.classList.add('breadcrumb-item');
 
-      const sep = document.createElement('span');
-      sep.classList.add('breadcrumb-sep');
-      sep.setAttribute('aria-hidden', 'true');
-      sep.textContent = '›';
-      li.append(sep);
-    } else {
-      const span = document.createElement('span');
-      span.classList.add('breadcrumb-current');
+      if (href) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = label;
+        a.classList.add('breadcrumb-link');
+        li.append(a);
 
-      // check if it has pdp-breadcrumb-name class
-      if (item.classList.contains('pdp-breadcrumb-name')) {
-        span.classList.add('pdp-breadcrumb-name');
+        const sep = document.createElement('span');
+        sep.classList.add('breadcrumb-sep');
+        sep.setAttribute('aria-hidden', 'true');
+        sep.textContent = '›';
+        li.append(sep);
+      } else {
+        // last item - product name (populated dynamically)
+        const span = document.createElement('span');
+        span.classList.add('breadcrumb-current');
+        if (className) span.classList.add(className);
+        span.setAttribute('aria-current', 'page');
+        span.textContent = label;
+        if (!label) li.classList.add('breadcrumb-hidden');
+        li.append(span);
       }
 
-      span.setAttribute('aria-current', 'page');
-      span.textContent = item.textContent.trim();
+      ol.append(li);
+    });
+  } else {
+    // standard breadcrumb - read from block content
+    items.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.classList.add('breadcrumb-item');
 
-      // hide if empty - will be populated by pdp-details.js
-      if (!span.textContent) li.classList.add('breadcrumb-hidden');
+      const isLast = index === items.length - 1;
+      const link = item.querySelector('a');
 
-      li.append(span);
-    }
+      if (link && !isLast) {
+        const a = document.createElement('a');
+        a.href = link.href;
+        a.textContent = link.textContent.trim();
+        a.classList.add('breadcrumb-link');
+        li.append(a);
 
-    ol.append(li);
-  });
+        const sep = document.createElement('span');
+        sep.classList.add('breadcrumb-sep');
+        sep.setAttribute('aria-hidden', 'true');
+        sep.textContent = '›';
+        li.append(sep);
+      } else {
+        const span = document.createElement('span');
+        span.classList.add('breadcrumb-current');
+        span.setAttribute('aria-current', 'page');
+        span.textContent = item.textContent.trim();
+        li.append(span);
+      }
+
+      ol.append(li);
+    });
+  }
 
   nav.append(ol);
   block.textContent = '';
