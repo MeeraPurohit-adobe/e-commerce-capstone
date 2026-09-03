@@ -595,3 +595,8 @@ main .section.highlight {
     padding: 1rem;
   }
 }
+
+/* hide drawer header and close button on desktop */
+.plp-filter-drawer-header {
+  display: none;
+}

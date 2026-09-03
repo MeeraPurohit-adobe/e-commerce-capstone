@@ -31,27 +31,26 @@ export function getFiltersFromURL() {
 export function applyFilters(data, filters) {
   let filtered = [...data];
 
-  // category filter
   if (filters.categories.length) {
     filtered = filtered.filter((p) => filters.categories.includes(p.categories));
   }
-
-  // features filter (type column)
   if (filters.features.length) {
     filtered = filtered.filter((p) => filters.features.includes(p.type));
   }
-
-  // light filter (store column)
   if (filters.lights.length) {
     filtered = filtered.filter((p) => filters.lights.includes(p.store));
   }
-
-  // size filter
   if (filters.sizes.length) {
-    filtered = filtered.filter((p) => filters.sizes.some((size) => p[size] === 'Yes'));
+    filtered = filtered.filter((p) => {
+      const price = parseInt(p.price.replace(/[^0-9]/g, ''), 10);
+      return filters.sizes.some((size) => {
+        if (size === 'size-small') return price <= 199;
+        if (size === 'size-medium') return price > 199 && price <= 499;
+        if (size === 'size-large') return price > 499;
+        return false;
+      });
+    });
   }
-
-  // price filter
   if (filters.priceMin !== null || filters.priceMax !== null) {
     filtered = filtered.filter((p) => {
       const price = parseInt(p.price.replace(/[^0-9]/g, ''), 10);
@@ -60,13 +59,8 @@ export function applyFilters(data, filters) {
       return aboveMin && belowMax;
     });
   }
-
-  // rating filter
   if (filters.ratings.length) {
-    filtered = filtered.filter((p) => {
-      const rating = parseFloat(p.rating);
-      return filters.ratings.some((r) => rating >= r);
-    });
+    filtered = filtered.filter((p) => filters.ratings.some((r) => parseFloat(p.rating) >= r));
   }
 
   return filtered;
@@ -88,10 +82,9 @@ function updateURLAndNotify(params) {
 
 export default async function decorate(block) {
   loadCSS();
-
   block.textContent = '';
 
-  // fetch all data to build dynamic filters
+  // fetch all data once
   let allData = [];
   try {
     const resp = await fetch('/data/plants-listing.json?limit=1000');
@@ -114,6 +107,19 @@ export default async function decorate(block) {
   const priceContainer = document.createElement('div');
   const ratingContainer = document.createElement('div');
 
+  // re-render all filters based on current filtered data
+  function refreshFilters() {
+    const filters = getFiltersFromURL();
+    const filteredData = applyFilters(allData, filters);
+
+    renderCategoryFilter(categoryContainer, filteredData, allData, onFilterChange);
+    renderFeaturesFilter(featuresContainer, filteredData, allData, onFilterChange);
+    renderLightFilter(lightContainer, filteredData, allData, onFilterChange);
+    renderSizeFilter(sizeContainer, allData, onFilterChange);
+    renderPriceFilter(priceContainer, allData, onFilterChange);
+    renderRatingFilter(ratingContainer, filteredData, onFilterChange);
+  }
+
   function onFilterChange() {
     updateURLAndNotify({
       categories: getCategoryFilterValues(categoryContainer),
@@ -124,17 +130,11 @@ export default async function decorate(block) {
       priceMax: getPriceFilterValues(priceContainer).max || '',
       ratings: getRatingFilterValues(ratingContainer),
     });
+    // re-render filters with updated filtered data
+    refreshFilters();
   }
 
-  // render all 6 filters dynamically from data
-  renderCategoryFilter(categoryContainer, allData, onFilterChange);
-  renderFeaturesFilter(featuresContainer, allData, onFilterChange);
-  renderLightFilter(lightContainer, allData, onFilterChange);
-  renderSizeFilter(sizeContainer, allData, onFilterChange);
-  renderPriceFilter(priceContainer, allData, onFilterChange);
-  renderRatingFilter(ratingContainer, onFilterChange);
-
-  // reset button at the bottom
+  // reset button
   const resetBtn = document.createElement('button');
   resetBtn.classList.add('advance-filter-reset');
   resetBtn.textContent = 'Reset';
@@ -154,9 +154,9 @@ export default async function decorate(block) {
       priceMax: '',
       ratings: [],
     });
+    refreshFilters();
   });
 
-  // append all to wrapper
   wrapper.append(categoryContainer);
   wrapper.append(featuresContainer);
   wrapper.append(lightContainer);
@@ -166,4 +166,7 @@ export default async function decorate(block) {
   wrapper.append(resetBtn);
 
   block.append(wrapper);
+
+  // initial render
+  refreshFilters();
 }

@@ -8,12 +8,11 @@ function loadCSS() {
   }
 }
 
-export function renderFeaturesFilter(container, allData, onChange) {
+export function renderFeaturesFilter(container, filteredData, allData, onChange) {
   loadCSS();
   container.textContent = '';
 
-  // extract unique types from data
-  const types = [...new Set(allData.map((p) => p.type).filter(Boolean))].sort();
+  const allTypes = [...new Set(allData.map((p) => p.type).filter(Boolean))].sort();
   const params = new URLSearchParams(window.location.search);
   const selected = params.get('features') ? params.get('features').split(',') : [];
 
@@ -27,15 +26,22 @@ export function renderFeaturesFilter(container, allData, onChange) {
   const btnRow = document.createElement('div');
   btnRow.classList.add('features-filter-buttons');
 
-  types.forEach((type) => {
+  allTypes.forEach((type) => {
+    const count = filteredData.filter((p) => p.type === type).length;
+
     const btn = document.createElement('button');
     btn.classList.add('features-filter-btn');
     btn.textContent = type;
     btn.dataset.value = type;
     if (selected.includes(type)) btn.classList.add('active');
+    if (count === 0 && !selected.includes(type)) btn.classList.add('disabled');
+    btn.disabled = count === 0 && !selected.includes(type);
+
     btn.addEventListener('click', () => {
-      btn.classList.toggle('active');
-      onChange();
+      if (!btn.disabled) {
+        btn.classList.toggle('active');
+        onChange();
+      }
     });
     btnRow.append(btn);
   });

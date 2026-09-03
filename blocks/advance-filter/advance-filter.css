@@ -61,3 +61,24 @@
   color: #222;
   margin: 0 0 0.5rem;
 }
+
+/* disabled filter option */
+.category-filter-label.disabled,
+.rating-filter-label.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.features-filter-btn.disabled,
+.light-filter-btn.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* filter count badge */
+.filter-count {
+  font-size: 0.75rem;
+  color: #888;
+  margin-left: auto;
+}
