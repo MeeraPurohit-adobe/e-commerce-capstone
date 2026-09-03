@@ -41,7 +41,7 @@
 }
 
 .pdp-stars .star.full {
-  color: #f5a623;
+  color: #000;
 }
 
 .pdp-stars .star.empty {
@@ -61,7 +61,7 @@
   left: 0;
   width: 50%;
   overflow: hidden;
-  color: #f5a623;
+  color: #000;
 }
 
 .pdp-review-count {
@@ -161,7 +161,7 @@
 /* stock */
 .pdp-stock {
   font-size: 0.82rem;
-  color: #e07000;
+  color: #e00;
   font-weight: 600;
   margin: 0;
 }
@@ -190,6 +190,30 @@
 .pdp-cart-btn--success {
   background: #6aeb60;
   color: #000;
+}
+
+/* description - after add to cart */
+.pdp-description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+  margin-top: 0.5rem;
+}
+
+.pdp-description-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.pdp-description-text {
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.7;
+  margin: 0;
 }
 
 /* mobile */
