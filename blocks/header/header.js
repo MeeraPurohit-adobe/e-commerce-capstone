@@ -1,5 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { decorateCartItems } from '../cart-items/cart-items.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -78,7 +79,6 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
   toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
   button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
-  // enable nav dropdown keyboard accessibility
   if (navSections) {
     const navDrops = navSections.querySelectorAll('.nav-drop');
     if (isDesktop.matches) {
@@ -95,17 +95,116 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
       });
     }
   }
-
-  // enable menu collapse on escape keypress
   if (!expanded || isDesktop.matches) {
-    // collapse menu on escape press
     window.addEventListener('keydown', closeOnEscape);
-    // collapse menu on focus lost
     nav.addEventListener('focusout', closeOnFocusLost);
   } else {
     window.removeEventListener('keydown', closeOnEscape);
     nav.removeEventListener('focusout', closeOnFocusLost);
   }
+}
+
+/**
+ * Builds the cart overlay panel
+ */
+function buildCartOverlay() {
+  // backdrop
+  const overlay = document.createElement('div');
+  overlay.classList.add('cart-overlay-backdrop');
+  document.body.append(overlay);
+
+  // panel
+  const panel = document.createElement('div');
+  panel.classList.add('cart-overlay-panel');
+
+  // panel header
+  const panelHeader = document.createElement('div');
+  panelHeader.classList.add('cart-overlay-header');
+
+  const panelTitle = document.createElement('h3');
+  panelTitle.classList.add('cart-overlay-title');
+  panelTitle.textContent = 'Your Cart';
+
+  const closeBtn = document.createElement('button');
+  closeBtn.classList.add('cart-overlay-close');
+  closeBtn.setAttribute('aria-label', 'Close cart');
+  closeBtn.textContent = '✕';
+
+  panelHeader.append(panelTitle);
+  panelHeader.append(closeBtn);
+
+  // items container
+  const itemsContainer = document.createElement('div');
+  itemsContainer.classList.add('cart-overlay-items');
+
+  // footer
+  const panelFooter = document.createElement('div');
+  panelFooter.classList.add('cart-overlay-footer');
+
+  const viewCartBtn = document.createElement('a');
+  viewCartBtn.href = '/cart/cart';
+  viewCartBtn.classList.add('cart-overlay-view-btn');
+  viewCartBtn.textContent = 'View Cart';
+
+  panelFooter.append(viewCartBtn);
+
+  panel.append(panelHeader);
+  panel.append(itemsContainer);
+  panel.append(panelFooter);
+  document.body.append(panel);
+
+  // load cart-items fragment only once
+  let fragmentLoaded = false;
+
+  async function loadCartFragment() {
+    if (fragmentLoaded) return;
+    try {
+      const resp = await fetch('/fragments/cart-items.plain.html');
+      if (!resp.ok) throw new Error('Failed to fetch fragment');
+      const html = await resp.text();
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const fragmentContent = doc.querySelector('main');
+
+      if (fragmentContent) {
+        itemsContainer.textContent = '';
+        while (fragmentContent.firstElementChild) {
+          itemsContainer.append(fragmentContent.firstElementChild);
+        }
+
+        // use imported decorateCartItems
+        const cartBlock = itemsContainer.querySelector('.cart-items');
+        if (cartBlock) decorateCartItems(cartBlock);
+
+        fragmentLoaded = true;
+      }
+    } catch (e) {
+      itemsContainer.innerHTML = '<p class="cart-overlay-empty">Failed to load cart.</p>';
+    }
+  }
+
+  function openPanel() {
+    panel.classList.add('open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    loadCartFragment();
+  }
+
+  function closePanel() {
+    panel.classList.remove('open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape') closePanel();
+  });
+
+  return { openPanel };
 }
 
 /**
@@ -120,7 +219,7 @@ export default async function decorate(block) {
 
   block.textContent = '';
 
-  // Add promotional banner BEFORE the nav
+  // add promotional banner before the nav
   const promo = document.createElement('div');
   promo.className = 'nav-promotional';
   promo.innerHTML = '<p>Get <strong>15%</strong> off and free shipping with discount code "<strong>welcome</strong>"</p>';
@@ -173,30 +272,40 @@ export default async function decorate(block) {
   navWrapper.append(nav);
   block.append(navWrapper);
 
-  // update cart icon count from session storage
+  // ── CART BADGE ──
   const updateCartCount = () => {
     try {
       const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
       const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-      const cartIcon = navWrapper.querySelector('a[href="#cart"]')
-        || navWrapper.querySelector('a[aria-label="Cart"]');
-
-      if (cartIcon && totalQty > 0) {
-        cartIcon.style.position = 'relative';
-        cartIcon.style.display = 'inline-flex';
+      const cartIcon = navWrapper.querySelector('.nav-cart-icon')
+        || navWrapper.querySelector('[aria-label="Cart"]');
+      if (cartIcon) {
         let badge = cartIcon.querySelector('.cart-badge');
         if (!badge) {
           badge = document.createElement('span');
           badge.classList.add('cart-badge');
+          cartIcon.style.position = 'relative';
+          cartIcon.style.display = 'inline-flex';
           cartIcon.append(badge);
         }
         badge.textContent = totalQty;
-        badge.style.display = 'flex';
+        badge.style.display = totalQty > 0 ? 'flex' : 'none';
       }
     } catch (e) {
       // fail silently
     }
   };
+
+  // ── CART OVERLAY ──
+  const cartIcon = navWrapper.querySelector('.nav-cart-icon')
+    || navWrapper.querySelector('[aria-label="Cart"]');
+
+  if (cartIcon) {
+    cartIcon.style.cursor = 'pointer';
+    const { openPanel } = buildCartOverlay();
+    cartIcon.addEventListener('click', openPanel);
+    window.addEventListener('cart-updated', updateCartCount);
+  }
 
   updateCartCount();
 }
