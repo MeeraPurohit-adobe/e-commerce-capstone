@@ -2,6 +2,7 @@
 .pdp-accordion-wrapper {
   display: flex;
   flex-direction: column;
+  width: 100%;
   border-top: 1px solid #eee;
 }
 
@@ -16,6 +17,7 @@
 /* accordion item */
 .pdp-accordion-item {
   border-bottom: 1px solid #eee;
+  width: 100%;
 }
 
 /* accordion header */
@@ -40,23 +42,25 @@
   color: #1a3c2e;
 }
 
-/* icon */
+/* arrow icon - rotates on open */
 .pdp-accordion-icon {
-  font-size: 1.25rem;
-  color: #888;
-  font-weight: 400;
-  transition: color 0.2s ease;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  color: #888;
+  transition: transform 0.3s ease, color 0.2s ease;
 }
 
 .pdp-accordion-header[aria-expanded='true'] .pdp-accordion-icon {
+  transform: rotate(180deg);
   color: #1a3c2e;
 }
 
-/* body */
+/* body - hidden by default */
 .pdp-accordion-body {
   display: none;
   padding: 0 0 1rem;
+  width: 100%;
 }
 
 .pdp-accordion-body.open {

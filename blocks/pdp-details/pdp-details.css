@@ -77,6 +77,19 @@
   margin: 0;
 }
 
+/* short description after price */
+.pdp-short-desc {
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* divider */
 .pdp-divider {
   border: none;
@@ -158,7 +171,7 @@
   color: #fff;
 }
 
-/* stock */
+/* stock - red */
 .pdp-stock {
   font-size: 0.82rem;
   color: #e00;
@@ -190,30 +203,6 @@
 .pdp-cart-btn--success {
   background: #6aeb60;
   color: #000;
-}
-
-/* description - after add to cart */
-.pdp-description {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #eee;
-  margin-top: 0.5rem;
-}
-
-.pdp-description-title {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #222;
-  margin: 0;
-}
-
-.pdp-description-text {
-  font-size: 0.875rem;
-  color: #555;
-  line-height: 1.7;
-  margin: 0;
 }
 
 /* mobile */

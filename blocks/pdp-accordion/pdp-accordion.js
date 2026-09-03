@@ -32,9 +32,10 @@ function buildAccordionItem(title, content, accordion) {
   const titleSpan = document.createElement('span');
   titleSpan.textContent = title;
 
+  // downward arrow SVG
   const icon = document.createElement('span');
   icon.classList.add('pdp-accordion-icon');
-  icon.textContent = '+';
+  icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
 
   header.append(titleSpan);
   header.append(icon);
@@ -53,14 +54,12 @@ function buildAccordionItem(title, content, accordion) {
     accordion.querySelectorAll('.pdp-accordion-item').forEach((i) => {
       if (i !== item) {
         i.querySelector('.pdp-accordion-header').setAttribute('aria-expanded', 'false');
-        i.querySelector('.pdp-accordion-icon').textContent = '+';
         i.querySelector('.pdp-accordion-body').classList.remove('open');
       }
     });
 
     // toggle current
     header.setAttribute('aria-expanded', isExpanded ? 'false' : 'true');
-    icon.textContent = isExpanded ? '+' : '−';
     body.classList.toggle('open', !isExpanded);
   });
 
@@ -75,7 +74,6 @@ export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
-  // read section titles and sheet keys from block content
   const sections = rows.map((row) => {
     const paras = [...row.querySelectorAll('p')];
     return {
@@ -84,13 +82,11 @@ export default async function decorate(block) {
     };
   });
 
-  // show loading
   block.innerHTML = '<p class="pdp-accordion-loading">Loading...</p>';
 
   try {
     const productId = getProductIdFromURL();
     let product = null;
-
     if (productId) {
       product = await fetchProductData(productId);
     }
@@ -99,12 +95,9 @@ export default async function decorate(block) {
     accordion.classList.add('pdp-accordion-wrapper');
 
     sections.forEach(({ title, key }) => {
-      // get content from product sheet data
       let content = '';
       if (product && product[key]) {
         content = product[key];
-      } else if (key === 'reviews' && product) {
-        content = `${product.reviews} verified reviews. Average rating ${product.rating} out of 5 stars.`;
       }
       accordion.append(buildAccordionItem(title, content, accordion));
     });

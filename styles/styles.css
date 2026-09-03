@@ -653,35 +653,39 @@ main .section.highlight {
 /* ==============================
    PRODUCT DETAIL PAGE
    ============================== */
+/* pdp layout */
 .pdp-layout.section {
   max-width: 1264px;
   margin: 0 auto;
   padding: 2rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 42% 58%;
   grid-template-areas:
     'gallery details'
     'gallery accordion';
-  gap: 1.5rem 3rem;
+  gap: 1rem 3rem;
   align-items: start;
 }
 
-/* gallery - left column spanning both rows */
-.pdp-layout.section > .pdp-gallery-wrapper {
+/* gallery - left sticky */
+.pdp-layout.section .pdp-gallery-wrapper {
   grid-area: gallery;
   position: sticky;
   top: 100px;
+  align-self: start;
 }
 
 /* details - right top */
-.pdp-layout.section > .pdp-details-wrapper,
-.pdp-layout.section > .product-detail-wrapper {
+.pdp-layout.section .pdp-details-wrapper,
+.pdp-layout.section .fragment-wrapper:nth-child(2) {
   grid-area: details;
 }
 
-/* accordion - right bottom */
-.pdp-layout.section > .pdp-accordion-wrapper {
+/* accordion - right bottom - full width of right column */
+.pdp-layout.section .pdp-accordion-wrapper,
+.pdp-layout.section .fragment-wrapper:nth-child(3) {
   grid-area: accordion;
+  width: 100%;
 }
 
 /* mobile */
@@ -695,7 +699,7 @@ main .section.highlight {
     padding: 1rem;
   }
 
-  .pdp-layout.section > .pdp-gallery-wrapper {
+  .pdp-layout.section .pdp-gallery-wrapper {
     position: static;
   }
 }
