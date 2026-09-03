@@ -42,6 +42,7 @@ export function buildCard(product) {
     // dont navigate if clicking heart or cart button
     if (e.target.closest('.card-heart') || e.target.closest('.card-cta')) return;
     const productId = product.name.toLowerCase().replace(/ /g, '-');
+    const productId = product.id || product.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     window.location.href = `/products/product-detail-page?id=${productId}`;
   });
 
@@ -84,8 +85,7 @@ export function buildCard(product) {
   btn.classList.add('card-cta');
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    const productId = product.name.toLowerCase().replace(/ /g, '-');
-    window.location.href = `/products/product-detail-page?id=${productId}`;
+    window.location.href = `/products/product-detail-page?id=${product.id}`;
   });
   details.append(btn);
 
