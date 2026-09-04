@@ -134,10 +134,23 @@ export default function decorate(block) {
   continueBtn.classList.add('order-summary-continue-btn');
   continueBtn.textContent = 'Continue Shopping';
 
-  const checkoutBtn = document.createElement('a');
-  checkoutBtn.href = checkoutLink;
+  const checkoutBtn = document.createElement('button');
   checkoutBtn.classList.add('order-summary-checkout-btn');
   checkoutBtn.textContent = 'Proceed to Checkout';
+  checkoutBtn.addEventListener('click', () => {
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
+    if (loggedInUser) {
+      // already logged in
+      window.location.href = '/account/account';
+    } else {
+      // show login popup
+      const popup = document.querySelector('.login-popup-overlay');
+      if (popup) {
+        popup.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  });
 
   // subtotal row placeholder
   const subtotalRow = buildRow('Subtotal', '₹0');
