@@ -11,38 +11,35 @@ export function saveCart(cart) {
 }
 
 export function updateCartIcon() {
-  const cart = getCart();
-  const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  try {
+    const cart = getCart();
+    const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
 
-  const tryUpdate = () => {
-    const cartIcon = document.querySelector('.nav-tools a[href="/cart/cart"]')
-      || document.querySelector('.nav-tools a[aria-label="Cart"]')
-      || document.querySelector('header a[href="/cart/cart"]')
-      || document.querySelector('header a[aria-label="Cart"]');
-
-    if (!cartIcon) return false;
+    // use exact EDS icon class
+    const cartIcon = document.querySelector('.icon-cart');
+    if (!cartIcon) return;
 
     cartIcon.style.position = 'relative';
     cartIcon.style.display = 'inline-flex';
 
-    let cartBadge = cartIcon.querySelector('.cart-badge');
-    if (!cartBadge) {
-      cartBadge = document.createElement('span');
-      cartBadge.classList.add('cart-badge');
-      cartIcon.append(cartBadge);
+    let badge = cartIcon.querySelector('.cart-badge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.classList.add('cart-badge');
+      cartIcon.append(badge);
     }
 
-    cartBadge.textContent = totalQty;
-    cartBadge.style.display = totalQty > 0 ? 'flex' : 'none';
-    return true;
-  };
-
-  // try immediately then keep retrying until header loads
-  const attempts = [100, 300, 500, 800, 1000, 1500, 2000];
-  attempts.forEach((delay) => setTimeout(tryUpdate, delay));
+    if (loggedInUser) {
+      badge.style.display = 'none';
+    } else {
+      badge.textContent = totalQty;
+      badge.style.display = totalQty > 0 ? 'flex' : 'none';
+    }
+  } catch (e) {
+    // fail silently
+  }
 }
-
-
 
 export function addToCart(product) {
   const cart = getCart();
@@ -57,10 +54,10 @@ export function addToCart(product) {
 
   saveCart(cart);
 
-  // dispatch AFTER save
+  // dispatch cart-updated so header updates badge
   window.dispatchEvent(new CustomEvent('cart-updated'));
 }
-// update on page load
+
+// update on every page load including back/forward
 document.addEventListener('DOMContentLoaded', updateCartIcon);
-// also handle back/forward navigation
 window.addEventListener('pageshow', updateCartIcon);

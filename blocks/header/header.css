@@ -361,6 +361,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 }
 
 /* nav tools icons spacing */
+/* nav tools - force all icons horizontal */
 .nav-tools {
   display: flex;
   flex-direction: row;
@@ -371,24 +372,30 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 
 .nav-tools p {
   margin: 0;
-  display: flex;
+  padding: 0;
+  display: flex !important;
   align-items: center;
   flex-shrink: 0;
 }
 
-/* search and cart and account icons */
+.nav-tools .default-content-wrapper {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.25rem;
+}
+
 .nav-tools a,
 .nav-tools .nav-cart-icon,
 .nav-tools .nav-account-icon {
   font-size: 1.25rem;
   cursor: pointer;
   color: #333;
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
   position: relative;
-  white-space: nowrap;
 }
 
 .nav-tools a:hover,

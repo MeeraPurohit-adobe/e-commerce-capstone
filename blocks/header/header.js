@@ -129,7 +129,6 @@ function buildCartOverlay() {
   viewCartBtn.textContent = 'View Cart';
 
   panelFooter.append(viewCartBtn);
-
   panel.append(panelHeader);
   panel.append(itemsContainer);
   panel.append(panelFooter);
@@ -186,8 +185,7 @@ function buildCartOverlay() {
   return { openPanel };
 }
 
-function buildAccountDropdown(navWrapper) {
-  // create dropdown
+function buildAccountDropdown() {
   const dropdown = document.createElement('div');
   dropdown.classList.add('nav-account-dropdown');
 
@@ -267,17 +265,16 @@ export default async function decorate(block) {
   navWrapper.append(nav);
   block.append(navWrapper);
 
-  // ── CART + ACCOUNT LOGIC ──
+  // ── UPDATE NAV STATE (badge + account) ──
   const updateNavState = () => {
     try {
       const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
       const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
       const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
 
-      const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-        || navWrapper.querySelector('span[aria-label="Cart"]');
-      const accountIcon = navWrapper.querySelector('.nav-account-icon')
-        || navWrapper.querySelector('span[aria-label="Account"]');
+      // use exact class names from EDS icon processing
+      const cartIcon = navWrapper.querySelector('.icon-cart');
+      const accountIcon = navWrapper.querySelector('.icon-bust_in_silhouette');
 
       // ── CART BADGE ──
       if (cartIcon) {
@@ -292,10 +289,8 @@ export default async function decorate(block) {
         }
 
         if (loggedInUser) {
-          // logged in — hide only the badge count, keep cart icon visible
           badge.style.display = 'none';
         } else {
-          // not logged in — show badge with count
           badge.textContent = totalQty;
           badge.style.display = totalQty > 0 ? 'flex' : 'none';
         }
@@ -304,25 +299,21 @@ export default async function decorate(block) {
       // ── ACCOUNT ICON ──
       if (accountIcon) {
         if (loggedInUser) {
-          // show account icon
           accountIcon.style.display = 'inline-flex';
           accountIcon.style.position = 'relative';
+          accountIcon.style.cursor = 'pointer';
 
-          // add dropdown if not exists
           let dropdown = accountIcon.querySelector('.nav-account-dropdown');
           if (!dropdown) {
-            dropdown = buildAccountDropdown(navWrapper);
+            dropdown = buildAccountDropdown();
             const nameEl = dropdown.querySelector('.nav-account-name');
             if (nameEl) nameEl.textContent = `${loggedInUser.first_name} ${loggedInUser.last_name}`;
-            accountIcon.style.cursor = 'pointer';
             accountIcon.append(dropdown);
 
-            // toggle dropdown on click
             accountIcon.addEventListener('click', () => {
               dropdown.classList.toggle('active');
             });
 
-            // close dropdown when clicking outside
             document.addEventListener('click', (e) => {
               if (!accountIcon.contains(e.target)) {
                 dropdown.classList.remove('active');
@@ -330,7 +321,6 @@ export default async function decorate(block) {
             });
           }
         } else {
-          // hide account icon
           accountIcon.style.display = 'none';
         }
       }
@@ -340,16 +330,16 @@ export default async function decorate(block) {
   };
 
   // ── CART OVERLAY ──
-  const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-    || navWrapper.querySelector('span[aria-label="Cart"]');
-
+  const cartIcon = navWrapper.querySelector('.icon-cart');
   if (cartIcon) {
     cartIcon.style.cursor = 'pointer';
     const { openPanel } = buildCartOverlay();
     cartIcon.addEventListener('click', openPanel);
   }
 
+  // always listen for cart updates
   window.addEventListener('cart-updated', updateNavState);
+  window.addEventListener('pageshow', updateNavState);
 
   updateNavState();
 }
