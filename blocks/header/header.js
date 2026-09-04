@@ -3,6 +3,7 @@ import {
 } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 import decorateCartItems from '../cart-items/cart-items.js';
+import { updateWishlistIcon } from '../../scripts/wishlist-utils.js';
 
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
@@ -296,6 +297,20 @@ export default async function decorate(block) {
         }
       }
 
+      // ── WISHLIST ICON ──
+      const wishlistIcon = navWrapper.querySelector('.icon-heart');
+      if (wishlistIcon) {
+        wishlistIcon.style.cursor = 'pointer';
+        wishlistIcon.addEventListener('click', () => {
+          window.location.href = '/wishlist/wishlist';
+        });
+      }
+
+      // listen for wishlist updates
+      window.addEventListener('wishlist-updated', () => {
+        updateWishlistIcon();
+      });
+
       // ── ACCOUNT ICON ──
       if (accountIcon) {
         if (loggedInUser) {
@@ -324,6 +339,8 @@ export default async function decorate(block) {
           accountIcon.style.display = 'none';
         }
       }
+      // ── WISHLIST BADGE ──
+      updateWishlistIcon();
     } catch (e) {
       // fail silently
     }
