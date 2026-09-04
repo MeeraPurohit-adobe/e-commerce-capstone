@@ -10,18 +10,13 @@ function loadCSS() {
 
 async function fetchUsers() {
   try {
-    const resp = await fetch('/data/users.json?limit=20');
+    const resp = await fetch('/data/users.json?limit=1000');
     if (!resp.ok) throw new Error('Failed to fetch users');
     const json = await resp.json();
     return json.data || [];
   } catch (e) {
     return [];
   }
-}
-
-function getRedirectUrl(block) {
-  const link = block.querySelector('a');
-  return link?.href || '/account/account';
 }
 
 export function openLoginPopup() {
@@ -51,18 +46,14 @@ export default function decorate(block) {
   const subText = rows[0]?.querySelector('p')?.textContent || 'Please login to proceed to checkout';
   const emailLabel = rows[1]?.querySelector('p:first-child')?.textContent || 'Email';
   const emailPlaceholder = rows[1]?.querySelector('p:last-child')?.textContent || 'Enter your email address';
-  const firstNameLabel = rows[2]?.querySelector('p:first-child')?.textContent || 'First Name';
-  const firstNamePlaceholder = rows[2]?.querySelector('p:last-child')?.textContent || 'Enter your first name';
-  const lastNameLabel = rows[3]?.querySelector('p:first-child')?.textContent || 'Last Name';
-  const lastNamePlaceholder = rows[3]?.querySelector('p:last-child')?.textContent || 'Enter your last name';
-  const btnText = rows[4]?.querySelector('p')?.textContent || 'Login';
-  const redirectUrl = getRedirectUrl(block);
+  const btnText = rows[2]?.querySelector('p')?.textContent || 'Login';
+  const redirectUrl = rows[3]?.querySelector('a')?.href || '/account/account';
 
   // build overlay
   const overlay = document.createElement('div');
   overlay.classList.add('login-popup-overlay');
 
-  // build popup panel
+  // build panel
   const panel = document.createElement('div');
   panel.classList.add('login-popup-panel');
 
@@ -87,50 +78,23 @@ export default function decorate(block) {
   form.classList.add('login-popup-form');
   form.setAttribute('novalidate', '');
 
-  // email field
+  // email field only
   const emailGroup = document.createElement('div');
   emailGroup.classList.add('login-popup-field');
+
   const emailLabelEl = document.createElement('label');
   emailLabelEl.textContent = emailLabel;
   emailLabelEl.setAttribute('for', 'login-email');
+
   const emailInput = document.createElement('input');
   emailInput.type = 'email';
   emailInput.id = 'login-email';
   emailInput.classList.add('login-popup-input');
   emailInput.placeholder = emailPlaceholder;
   emailInput.required = true;
+
   emailGroup.append(emailLabelEl);
   emailGroup.append(emailInput);
-
-  // first name field
-  const firstNameGroup = document.createElement('div');
-  firstNameGroup.classList.add('login-popup-field');
-  const firstNameLabelEl = document.createElement('label');
-  firstNameLabelEl.textContent = firstNameLabel;
-  firstNameLabelEl.setAttribute('for', 'login-firstname');
-  const firstNameInput = document.createElement('input');
-  firstNameInput.type = 'text';
-  firstNameInput.id = 'login-firstname';
-  firstNameInput.classList.add('login-popup-input');
-  firstNameInput.placeholder = firstNamePlaceholder;
-  firstNameInput.required = true;
-  firstNameGroup.append(firstNameLabelEl);
-  firstNameGroup.append(firstNameInput);
-
-  // last name field
-  const lastNameGroup = document.createElement('div');
-  lastNameGroup.classList.add('login-popup-field');
-  const lastNameLabelEl = document.createElement('label');
-  lastNameLabelEl.textContent = lastNameLabel;
-  lastNameLabelEl.setAttribute('for', 'login-lastname');
-  const lastNameInput = document.createElement('input');
-  lastNameInput.type = 'text';
-  lastNameInput.id = 'login-lastname';
-  lastNameInput.classList.add('login-popup-input');
-  lastNameInput.placeholder = lastNamePlaceholder;
-  lastNameInput.required = true;
-  lastNameGroup.append(lastNameLabelEl);
-  lastNameGroup.append(lastNameInput);
 
   // error message
   const errorMsg = document.createElement('p');
@@ -144,22 +108,18 @@ export default function decorate(block) {
   submitBtn.textContent = btnText;
 
   form.append(emailGroup);
-  form.append(firstNameGroup);
-  form.append(lastNameGroup);
   form.append(errorMsg);
   form.append(submitBtn);
 
-  // form submit
+  // form submit - validate email against users sheet
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorMsg.style.display = 'none';
 
     const email = emailInput.value.trim().toLowerCase();
-    const firstName = firstNameInput.value.trim().toLowerCase();
-    const lastName = lastNameInput.value.trim().toLowerCase();
 
-    if (!email || !firstName || !lastName) {
-      errorMsg.textContent = 'Please fill in all fields.';
+    if (!email) {
+      errorMsg.textContent = 'Please enter your email address.';
       errorMsg.style.display = 'block';
       return;
     }
@@ -170,16 +130,13 @@ export default function decorate(block) {
     // fetch users from DA sheet
     const users = await fetchUsers();
 
-    // match all three fields
-    const matchedUser = users.find((u) => u.email.toLowerCase() === email
-      && u.first_name.toLowerCase() === firstName
-      && u.last_name.toLowerCase() === lastName);
+    // match by email only
+    const matchedUser = users.find((u) => u.email.toLowerCase() === email);
 
     if (matchedUser) {
       // save to sessionStorage
       sessionStorage.setItem('loggedInUser', JSON.stringify(matchedUser));
       closeLoginPopup();
-      // redirect to account page
       window.location.href = redirectUrl;
     } else {
       errorMsg.textContent = 'You are not Authorised to login.';
