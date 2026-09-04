@@ -1,0 +1,113 @@
+/* 404 block */
+.error-404 {
+  width: 100%;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  box-sizing: border-box;
+}
+
+.error-404-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1.25rem;
+  max-width: 480px;
+}
+
+/* large 404 number */
+.error-404-code {
+  font-size: 8rem;
+  font-weight: 900;
+  color: #1a3c2e;
+  line-height: 1;
+  opacity: 0.15;
+  letter-spacing: -4px;
+}
+
+/* title */
+.error-404-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a3c2e;
+  margin: 0;
+}
+
+/* description */
+.error-404-desc {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* buttons row */
+.error-404-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* primary button */
+.error-404-btn--primary {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: #1a3c2e;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.error-404-btn--primary:hover {
+  background: #0f2a1e;
+}
+
+/* secondary button */
+.error-404-btn--secondary {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background: #fff;
+  color: #1a3c2e;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  border: 1.5px solid #1a3c2e;
+  transition: all 0.2s ease;
+}
+
+.error-404-btn--secondary:hover {
+  background: #1a3c2e;
+  color: #fff;
+}
+
+/* mobile */
+@media (width < 600px) {
+  .error-404-code {
+    font-size: 6rem;
+  }
+
+  .error-404-title {
+    font-size: 1.4rem;
+  }
+
+  .error-404-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .error-404-btn--primary,
+  .error-404-btn--secondary {
+    text-align: center;
+    width: 100%;
+  }
+}
