@@ -16,7 +16,6 @@ export function updateCartIcon() {
     const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
 
-    // use exact EDS icon class
     const cartIcon = document.querySelector('.icon-cart');
     if (!cartIcon) return;
 
@@ -47,7 +46,8 @@ export function addToCart(product) {
   const existing = cart.find((item) => String(item.id) === String(product.id));
 
   if (existing) {
-    existing.quantity = (existing.quantity || 1) + quantity;
+    // replace quantity with new selected quantity
+    existing.quantity = quantity;
   } else {
     cart.push({ ...product, quantity });
   }
@@ -58,6 +58,17 @@ export function addToCart(product) {
   window.dispatchEvent(new CustomEvent('cart-updated'));
 }
 
-// update on every page load including back/forward
-document.addEventListener('DOMContentLoaded', updateCartIcon);
-window.addEventListener('pageshow', updateCartIcon);
+// retry until icon-cart is found in DOM
+function tryUpdateCartIcon() {
+  const cartIcon = document.querySelector('.icon-cart');
+  if (cartIcon) {
+    updateCartIcon();
+  } else {
+    setTimeout(updateCartIcon, 500);
+    setTimeout(updateCartIcon, 1000);
+    setTimeout(updateCartIcon, 2000);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', tryUpdateCartIcon);
+window.addEventListener('pageshow', tryUpdateCartIcon);

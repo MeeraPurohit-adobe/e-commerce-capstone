@@ -1,4 +1,4 @@
-import { addToCart, updateCartIcon } from '../../scripts/cart-utils.js';
+import { addToCart } from '../../scripts/cart-utils.js';
 function loadCardCSS() {
   const cssPath = '/blocks/card/card.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -130,14 +130,14 @@ export function buildCard(product) {
         if (existing) {
           existing.quantity = val - 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
-          updateCartIcon();
+          window.dispatchEvent(new CustomEvent('cart-updated'));
           dispatchCartUpdate(); 
         }
       } else {
         const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
-        updateCartIcon();
+        window.dispatchEvent(new CustomEvent('cart-updated'));
         dispatchCartUpdate(); 
         qtyWrapper.replaceWith(btn);
       }
@@ -155,7 +155,7 @@ export function buildCard(product) {
         if (existing) {
           existing.quantity = val + 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
-          updateCartIcon();
+          window.dispatchEvent(new CustomEvent('cart-updated'));
           dispatchCartUpdate(); 
         }
       }
@@ -168,7 +168,7 @@ export function buildCard(product) {
         const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
-        updateCartIcon();
+        window.dispatchEvent(new CustomEvent('cart-updated'));
         dispatchCartUpdate(); 
         qtyWrapper.replaceWith(btn);
         return;
@@ -182,7 +182,7 @@ export function buildCard(product) {
       if (existing) {
         existing.quantity = val;
         sessionStorage.setItem('cart', JSON.stringify(cart));
-        updateCartIcon();
+        window.dispatchEvent(new CustomEvent('cart-updated'));
         dispatchCartUpdate(); 
       }
     });
