@@ -65,14 +65,11 @@ function buildQuantitySelector(stock) {
   plusBtn.setAttribute('aria-label', 'Increase quantity');
   plusBtn.textContent = '+';
 
-  // update button states
   function updateButtons() {
-    const val = parseInt(input.value, 10);
-    minusBtn.disabled = val <= 1;
-    plusBtn.disabled = val >= maxQty;
+    minusBtn.disabled = parseInt(input.value, 10) <= 1;
+    plusBtn.disabled = parseInt(input.value, 10) >= maxQty;
   }
 
-  // initial state - minus disabled at 1
   updateButtons();
 
   minusBtn.addEventListener('click', () => {
