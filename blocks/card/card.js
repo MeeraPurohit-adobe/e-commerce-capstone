@@ -213,8 +213,115 @@ export function buildCard(product) {
   card.append(heart);
   card.append(imgWrapper);
   card.append(details);
+  // restore cart state on page load
+  restoreCardState(card, product, btn, details);
 
   return card;
+}
+
+function restoreCardState(card, product, btn, details) {
+  const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+  const existing = cart.find((item) => String(item.id) === String(product.id));
+
+  if (!existing) return; // not in cart - show normal Add to Cart button
+
+  // product is in cart - show quantity selector instead of button
+  const qtyWrapper = document.createElement('div');
+  qtyWrapper.classList.add('card-qty-wrapper');
+
+  const minusBtn = document.createElement('button');
+  minusBtn.classList.add('card-qty-btn');
+  minusBtn.setAttribute('aria-label', 'Decrease quantity');
+  minusBtn.textContent = '−';
+
+  const qtyInput = document.createElement('input');
+  qtyInput.type = 'number';
+  qtyInput.classList.add('card-qty-input');
+  qtyInput.value = existing.quantity || 1;
+  qtyInput.min = '0';
+  qtyInput.max = product.stock || '99';
+
+  const plusBtn = document.createElement('button');
+  plusBtn.classList.add('card-qty-btn');
+  plusBtn.textContent = '+';
+  plusBtn.setAttribute('aria-label', 'Increase quantity');
+
+  function updateButtons() {
+    minusBtn.disabled = parseInt(qtyInput.value, 10) <= 1;
+    plusBtn.disabled = parseInt(qtyInput.value, 10) >= parseInt(product.stock || 99, 10);
+  }
+  updateButtons();
+
+  minusBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const val = parseInt(qtyInput.value, 10);
+    if (val > 1) {
+      qtyInput.value = val - 1;
+      updateButtons();
+      const cartData = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const found = cartData.find((i) => String(i.id) === String(product.id));
+      if (found) {
+        found.quantity = val - 1;
+        sessionStorage.setItem('cart', JSON.stringify(cartData));
+        window.dispatchEvent(new CustomEvent('cart-updated'));
+      }
+    } else {
+      // remove from cart - revert to Add to Cart
+      const cartData = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const updated = cartData.filter((i) => String(i.id) !== String(product.id));
+      sessionStorage.setItem('cart', JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+      qtyWrapper.replaceWith(btn);
+    }
+  });
+
+  plusBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    const val = parseInt(qtyInput.value, 10);
+    const max = parseInt(product.stock || 99, 10);
+    if (val < max) {
+      qtyInput.value = val + 1;
+      updateButtons();
+      const cartData = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const found = cartData.find((i) => String(i.id) === String(product.id));
+      if (found) {
+        found.quantity = val + 1;
+        sessionStorage.setItem('cart', JSON.stringify(cartData));
+        window.dispatchEvent(new CustomEvent('cart-updated'));
+      }
+    }
+  });
+
+  qtyInput.addEventListener('change', (ev) => {
+    ev.stopPropagation();
+    let val = parseInt(qtyInput.value, 10);
+    if (val <= 0) {
+      const cartData = JSON.parse(sessionStorage.getItem('cart') || '[]');
+      const updated = cartData.filter((i) => String(i.id) !== String(product.id));
+      sessionStorage.setItem('cart', JSON.stringify(updated));
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+      qtyWrapper.replaceWith(btn);
+      return;
+    }
+    const max = parseInt(product.stock || 99, 10);
+    if (val > max) val = max;
+    qtyInput.value = val;
+    updateButtons();
+    const cartData = JSON.parse(sessionStorage.getItem('cart') || '[]');
+    const found = cartData.find((i) => String(i.id) === String(product.id));
+    if (found) {
+      found.quantity = val;
+      sessionStorage.setItem('cart', JSON.stringify(cartData));
+      window.dispatchEvent(new CustomEvent('cart-updated'));
+    }
+  });
+
+  qtyWrapper.append(minusBtn);
+  qtyWrapper.append(qtyInput);
+  qtyWrapper.append(plusBtn);
+
+  // replace Add to Cart button with quantity selector
+  btn.replaceWith(qtyWrapper);
 }
 
 export default function decorate(block) {
