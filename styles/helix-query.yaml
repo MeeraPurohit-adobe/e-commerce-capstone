@@ -1,0 +1,78 @@
+version: 1
+indices:
+  products:
+    include:
+      - /products/**
+    properties:
+      title:
+        select: head > title
+      description:
+        select: head > meta[name="description"]
+      image:
+        select: head > meta[property="og:image"]
+      robots:
+        select: head > meta[name="robots"]
+    target: /products
+
+  categories:
+    include:
+      - /category/**
+    properties:
+      title:
+        select: head > title
+      description:
+        select: head > meta[name="description"]
+      image:
+        select: head > meta[property="og:image"]
+    target: /category
+
+  cart:
+    include:
+      - /cart/**
+    properties:
+      title:
+        select: head > title
+      robots:
+        select: head > meta[name="robots"]
+    target: /cart
+
+  account:
+    include:
+      - /account/**
+    properties:
+      title:
+        select: head > title
+      robots:
+        select: head > meta[name="robots"]
+    target: /account
+
+  wishlist:
+    include:
+      - /wishlist/**
+    properties:
+      title:
+        select: head > title
+      robots:
+        select: head > meta[name="robots"]
+    target: /wishlist
+
+  pages:
+    include:
+      - /**
+    exclude:
+      - /fragments/**
+      - /blocks/**
+      - /data/**
+      - /nav
+      - /footer
+      - /metadata
+    properties:
+      title:
+        select: head > title
+      description:
+        select: head > meta[name="description"]
+      image:
+        select: head > meta[property="og:image"]
+      robots:
+        select: head > meta[name="robots"]
+    target: /
