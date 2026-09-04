@@ -139,16 +139,28 @@ export default function decorate(block) {
   checkoutBtn.textContent = 'Proceed to Checkout';
   checkoutBtn.addEventListener('click', () => {
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
+
     if (loggedInUser) {
-      // already logged in
+      // already logged in — go directly
       window.location.href = '/account/account';
-    } else {
-      // show login popup
+      return;
+    }
+
+    // not logged in — find and open popup
+    // try immediately then retry in case fragment not loaded yet
+    const tryOpenPopup = () => {
       const popup = document.querySelector('.login-popup-overlay');
       if (popup) {
         popup.classList.add('active');
         document.body.style.overflow = 'hidden';
+        return true;
       }
+      return false;
+    };
+
+    if (!tryOpenPopup()) {
+      setTimeout(tryOpenPopup, 300);
+      setTimeout(tryOpenPopup, 800);
     }
   });
 
