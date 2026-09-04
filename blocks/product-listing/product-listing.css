@@ -84,32 +84,6 @@
   flex-direction: column;
 }
 
-/* compare row */
-.product-listing-compare {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 1rem;
-  background: #fff;
-  border: 1px solid #e8e8e8;
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-}
-
-.product-listing-compare-checkbox {
-  width: 15px;
-  height: 15px;
-  cursor: pointer;
-  accent-color: #1a3c2e;
-}
-
-.product-listing-compare-label {
-  font-size: 0.8rem;
-  color: #555;
-  cursor: pointer;
-}
-
 /* mobile */
 @media (width < 900px) {
   .product-listing-body {

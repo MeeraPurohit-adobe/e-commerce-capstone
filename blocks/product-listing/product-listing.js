@@ -160,24 +160,6 @@ export default async function decorate(block) {
         const card = buildCard(plant);
         cardWrapper.append(card);
 
-        // compare checkbox
-        const compareWrapper = document.createElement('div');
-        compareWrapper.classList.add('product-listing-compare');
-
-        const compareCheckbox = document.createElement('input');
-        compareCheckbox.type = 'checkbox';
-        compareCheckbox.id = `compare-${plant.name.replace(/ /g, '-').toLowerCase()}`;
-        compareCheckbox.classList.add('product-listing-compare-checkbox');
-
-        const compareLabel = document.createElement('label');
-        compareLabel.htmlFor = compareCheckbox.id;
-        compareLabel.textContent = 'Compare';
-        compareLabel.classList.add('product-listing-compare-label');
-
-        compareWrapper.append(compareCheckbox);
-        compareWrapper.append(compareLabel);
-        cardWrapper.append(compareWrapper);
-
         cardsSection.append(cardWrapper);
       });
     } catch (e) {
