@@ -1,5 +1,6 @@
 import { renderStars } from '../card/card.js';
-import { addToCart, updateCartIcon } from '../../scripts/cart-utils.js';
+import { addToCart } from '../../scripts/cart-utils.js';
+
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -11,24 +12,20 @@ function loadCSS() {
 }
 
 function getProductIdFromURL() {
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const id = params.get('id');
-  return id || '';
+  try {
+    const url = new URL(window.location.href);
+    return url.searchParams.get('id') || '';
+  } catch (e) {
+    return '';
+  }
 }
 
 async function fetchProductData(productId) {
-  try {
-    const resp = await fetch('/data/plants-listing.json?limit=1000');
-    if (!resp.ok) throw new Error(`HTTP error: ${resp.status}`);
-    const json = await resp.json();
-    const products = json.data || [];
-    return products.find((p) => String(p.id) === String(productId)) || null;
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('fetchProductData error:', e.message);
-    return null;
-  }
+  const resp = await fetch('/data/plants-listing.json?limit=1000');
+  if (!resp.ok) throw new Error('Failed to fetch');
+  const json = await resp.json();
+  const products = json.data || [];
+  return products.find((p) => String(p.id) === String(productId)) || null;
 }
 
 function showAddToCartSuccess(btn) {
@@ -120,17 +117,15 @@ export default async function decorate(block) {
       return;
     }
 
-    // update breadcrumb - try multiple times to handle async rendering
+    // update breadcrumb dynamically
     const updateBreadcrumb = () => {
       const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
       if (breadcrumbName) {
         breadcrumbName.textContent = product.name;
-        // remove hidden class if breadcrumb item was hidden
         const li = breadcrumbName.closest('.breadcrumb-item');
         if (li) li.classList.remove('breadcrumb-hidden');
       }
     };
-
     updateBreadcrumb();
     setTimeout(updateBreadcrumb, 300);
     setTimeout(updateBreadcrumb, 800);
@@ -241,7 +236,6 @@ export default async function decorate(block) {
     stock.classList.add('pdp-stock');
     stock.textContent = `Only ${product.stock} left in stock`;
 
-    // ── QUANTITY + ADD TO CART row ──
     // ── QUANTITY + ADD TO CART + WISHLIST ──
     const cartRow = document.createElement('div');
     cartRow.classList.add('pdp-cart-row');
@@ -251,25 +245,18 @@ export default async function decorate(block) {
     const cartBtn = document.createElement('button');
     cartBtn.classList.add('pdp-cart-btn');
     cartBtn.textContent = 'Add to Cart';
-    cartBtn.addEventListener('click', () => {
-      const quantity = parseInt(
-        document.querySelector('.pdp-quantity-input')?.value || '1',
-        10,
-      );
 
-      // add to cart with selected quantity
+    cartBtn.addEventListener('click', () => {
+      // read quantity from input at time of click
+      const qtyInput = quantitySelector.querySelector('.pdp-quantity-input');
+      const quantity = parseInt(qtyInput?.value || '1', 10);
+
+      // add to cart using cart-utils — updates sessionStorage + dispatches cart-updated
       addToCart({ ...product, quantity });
 
       // show success feedback
-      const original = cartBtn.textContent;
-      cartBtn.textContent = '✓ Added to Cart!';
-      cartBtn.classList.add('pdp-cart-btn--success');
-      setTimeout(() => {
-        cartBtn.textContent = original;
-        cartBtn.classList.remove('pdp-cart-btn--success');
-      }, 2000);
+      showAddToCartSuccess(cartBtn);
     });
-
 
     // wishlist heart button
     const wishlistBtn = document.createElement('button');
@@ -316,8 +303,6 @@ export default async function decorate(block) {
     block.append(wrapper);
 
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('pdp-details decorate error:', e.message, e.stack);
-    block.innerHTML = `<p class="pdp-details-error">Error: ${e.message}</p>`;
+    block.innerHTML = '<p class="pdp-details-error">Failed to load product details.</p>';
   }
 }
