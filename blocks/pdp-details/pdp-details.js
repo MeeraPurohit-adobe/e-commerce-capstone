@@ -1,6 +1,6 @@
 import { renderStars } from '../card/card.js';
 import { addToCart } from '../../scripts/cart-utils.js';
-
+import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -265,10 +265,15 @@ export default async function decorate(block) {
     const wishlistBtn = document.createElement('button');
     wishlistBtn.classList.add('pdp-wishlist-btn');
     wishlistBtn.setAttribute('aria-label', 'Add to wishlist');
-    wishlistBtn.innerHTML = '&#9825;';
+
+    const wishlisted = isWishlisted(product.id);
+    wishlistBtn.innerHTML = wishlisted ? '&#9829;' : '&#9825;';
+    if (wishlisted) wishlistBtn.classList.add('active');
+
     wishlistBtn.addEventListener('click', () => {
-      wishlistBtn.classList.toggle('active');
-      wishlistBtn.innerHTML = wishlistBtn.classList.contains('active') ? '&#9829;' : '&#9825;';
+      const added = toggleWishlist(product);
+      wishlistBtn.classList.toggle('active', added);
+      wishlistBtn.innerHTML = added ? '&#9829;' : '&#9825;';
     });
 
     cartRow.append(quantitySelector);

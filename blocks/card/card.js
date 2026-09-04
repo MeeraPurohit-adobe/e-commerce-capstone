@@ -1,4 +1,5 @@
 import { addToCart } from '../../scripts/cart-utils.js';
+import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
 function loadCardCSS() {
   const cssPath = '/blocks/card/card.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -57,10 +58,17 @@ export function buildCard(product) {
   const heart = document.createElement('button');
   heart.classList.add('card-heart');
   heart.setAttribute('aria-label', 'Add to wishlist');
-  heart.innerHTML = '&#9825;';
-  heart.addEventListener('click', () => {
-    heart.classList.toggle('active');
-    heart.innerHTML = heart.classList.contains('active') ? '&#9829;' : '&#9825;';
+
+  // check if already wishlisted
+  const wishlisted = isWishlisted(product.id);
+  heart.innerHTML = wishlisted ? '&#9829;' : '&#9825;';
+  if (wishlisted) heart.classList.add('active');
+
+  heart.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const added = toggleWishlist(product);
+    heart.classList.toggle('active', added);
+    heart.innerHTML = added ? '&#9829;' : '&#9825;';
   });
 
   // image
