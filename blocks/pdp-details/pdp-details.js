@@ -1,6 +1,7 @@
 import { renderStars } from '../card/card.js';
 import { addToCart } from '../../scripts/cart-utils.js';
 import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
+
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -30,7 +31,7 @@ async function fetchProductData(productId) {
 
 function showAddToCartSuccess(btn) {
   const original = btn.textContent;
-  btn.textContent = '✓ Added to Cart!';
+  btn.textContent = '✓ Updated!';
   btn.classList.add('pdp-cart-btn--success');
   setTimeout(() => {
     btn.textContent = original;
@@ -52,8 +53,8 @@ function buildQuantitySelector(stock, product) {
   const input = document.createElement('input');
   input.type = 'number';
   input.classList.add('pdp-quantity-input');
-  input.value = '1';
-  input.min = '1';
+  input.value = '0';
+  input.min = '0';
   input.max = maxQty;
   input.setAttribute('aria-label', 'Quantity');
 
@@ -63,7 +64,7 @@ function buildQuantitySelector(stock, product) {
   plusBtn.textContent = '+';
 
   function updateButtons() {
-    minusBtn.disabled = parseInt(input.value, 10) <= 1;
+    minusBtn.disabled = parseInt(input.value, 10) <= 0;
     plusBtn.disabled = parseInt(input.value, 10) >= maxQty;
   }
 
@@ -71,7 +72,7 @@ function buildQuantitySelector(stock, product) {
 
   minusBtn.addEventListener('click', () => {
     const val = parseInt(input.value, 10);
-    if (val > 1) {
+    if (val > 0) {
       input.value = val - 1;
       updateButtons();
       addToCart({ ...product, quantity: val - 1 });
@@ -89,7 +90,7 @@ function buildQuantitySelector(stock, product) {
 
   input.addEventListener('change', () => {
     let val = parseInt(input.value, 10);
-    if (val < 1) val = 1;
+    if (val < 0) val = 0;
     if (val > maxQty) val = maxQty;
     input.value = val;
     updateButtons();
@@ -120,7 +121,7 @@ export default async function decorate(block) {
       return;
     }
 
-    // update breadcrumb dynamically
+    // ── UPDATE BREADCRUMB ──
     const updateBreadcrumb = () => {
       const breadcrumbName = document.querySelector('.pdp-breadcrumb-name');
       if (breadcrumbName) {
@@ -250,15 +251,11 @@ export default async function decorate(block) {
     cartBtn.textContent = 'Add to Cart';
 
     cartBtn.addEventListener('click', () => {
-      // read quantity from input at time of click
       const qtyInput = quantitySelector.querySelector('.pdp-quantity-input');
-      const quantity = parseInt(qtyInput?.value || '1', 10);
-
-      // add to cart using cart-utils — updates sessionStorage + dispatches cart-updated
+      const quantity = parseInt(qtyInput?.value || '0', 10);
       addToCart({ ...product, quantity });
-
-      // show success feedback
       showAddToCartSuccess(cartBtn);
+      cartBtn.textContent = 'Update Cart';
     });
 
     // wishlist heart button
@@ -279,6 +276,21 @@ export default async function decorate(block) {
     cartRow.append(quantitySelector);
     cartRow.append(cartBtn);
     cartRow.append(wishlistBtn);
+
+    // ── RESTORE CART STATE ──
+    const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+    const existingCartItem = cart.find((item) => String(item.id) === String(product.id));
+    if (existingCartItem) {
+      const qtyInput = quantitySelector.querySelector('.pdp-quantity-input');
+      if (qtyInput) {
+        qtyInput.value = existingCartItem.quantity || 0;
+        const minusBtn = quantitySelector.querySelector('.pdp-quantity-btn:first-child');
+        const plusBtn = quantitySelector.querySelector('.pdp-quantity-btn:last-child');
+        if (minusBtn) minusBtn.disabled = existingCartItem.quantity <= 0;
+        if (plusBtn) plusBtn.disabled = existingCartItem.quantity >= parseInt(product.stock || 99, 10);
+      }
+      cartBtn.textContent = 'Update Cart';
+    }
 
     // ── DESCRIPTION after Add to Cart ──
     const descSection = document.createElement('div');
