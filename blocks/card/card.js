@@ -44,7 +44,12 @@ export function buildCard(product) {
   // make card clickable — navigate to product detail page
   card.style.cursor = 'pointer';
   card.addEventListener('click', (e) => {
-    if (e.target.closest('.card-heart') || e.target.closest('.card-cta')) return;
+    // dont navigate if clicking heart, cart button, quantity wrapper, qty input or qty buttons
+    if (e.target.closest('.card-heart')) return;
+    if (e.target.closest('.card-cta')) return;
+    if (e.target.closest('.card-qty-wrapper')) return;
+    if (e.target.closest('.card-qty-btn')) return;
+    if (e.target.closest('.card-qty-input')) return;
     window.location.href = `/products/product-detail-page?id=${product.id}`;
   });
 
@@ -131,14 +136,14 @@ export function buildCard(product) {
           existing.quantity = val - 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
           window.dispatchEvent(new CustomEvent('cart-updated'));
-          dispatchCartUpdate(); 
+          dispatchCartUpdate();
         }
       } else {
         const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
         window.dispatchEvent(new CustomEvent('cart-updated'));
-        dispatchCartUpdate(); 
+        dispatchCartUpdate();
         qtyWrapper.replaceWith(btn);
       }
     });
@@ -156,7 +161,7 @@ export function buildCard(product) {
           existing.quantity = val + 1;
           sessionStorage.setItem('cart', JSON.stringify(cart));
           window.dispatchEvent(new CustomEvent('cart-updated'));
-          dispatchCartUpdate(); 
+          dispatchCartUpdate();
         }
       }
     });
@@ -169,7 +174,7 @@ export function buildCard(product) {
         const updated = cart.filter((item) => String(item.id) !== String(product.id));
         sessionStorage.setItem('cart', JSON.stringify(updated));
         window.dispatchEvent(new CustomEvent('cart-updated'));
-        dispatchCartUpdate(); 
+        dispatchCartUpdate();
         qtyWrapper.replaceWith(btn);
         return;
       }
@@ -183,7 +188,7 @@ export function buildCard(product) {
         existing.quantity = val;
         sessionStorage.setItem('cart', JSON.stringify(cart));
         window.dispatchEvent(new CustomEvent('cart-updated'));
-        dispatchCartUpdate(); 
+        dispatchCartUpdate();
       }
     });
 

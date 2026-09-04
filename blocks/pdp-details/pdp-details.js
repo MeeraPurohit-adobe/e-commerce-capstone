@@ -38,7 +38,7 @@ function showAddToCartSuccess(btn) {
   }, 2000);
 }
 
-function buildQuantitySelector(stock) {
+function buildQuantitySelector(stock, product) {
   const maxQty = parseInt(stock, 10) || 99;
 
   const wrapper = document.createElement('div');
@@ -74,6 +74,7 @@ function buildQuantitySelector(stock) {
     if (val > 1) {
       input.value = val - 1;
       updateButtons();
+      addToCart({ ...product, quantity: val - 1 });
     }
   });
 
@@ -82,6 +83,7 @@ function buildQuantitySelector(stock) {
     if (val < maxQty) {
       input.value = val + 1;
       updateButtons();
+      addToCart({ ...product, quantity: val + 1 });
     }
   });
 
@@ -91,6 +93,7 @@ function buildQuantitySelector(stock) {
     if (val > maxQty) val = maxQty;
     input.value = val;
     updateButtons();
+    addToCart({ ...product, quantity: val });
   });
 
   wrapper.append(minusBtn);
@@ -240,7 +243,7 @@ export default async function decorate(block) {
     const cartRow = document.createElement('div');
     cartRow.classList.add('pdp-cart-row');
 
-    const quantitySelector = buildQuantitySelector(product.stock);
+    const quantitySelector = buildQuantitySelector(product.stock, product);
 
     const cartBtn = document.createElement('button');
     cartBtn.classList.add('pdp-cart-btn');
