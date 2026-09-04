@@ -1,8 +1,9 @@
-import { getMetadata } from '../../scripts/aem.js';
+import {
+  getMetadata,
+} from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 import decorateCartItems from '../cart-items/cart-items.js';
 
-// media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
 function closeOnEscape(e) {
@@ -54,11 +55,6 @@ function focusNavSection() {
   document.activeElement.addEventListener('keydown', openOnKeydown);
 }
 
-/**
- * Toggles all nav sections
- * @param {Element} sections The container element
- * @param {Boolean} expanded Whether the element should be expanded or collapsed
- */
 function toggleAllNavSections(sections, expanded = false) {
   if (!sections) return;
   sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
@@ -66,12 +62,6 @@ function toggleAllNavSections(sections, expanded = false) {
   });
 }
 
-/**
- * Toggles the entire nav
- * @param {Element} nav The container element
- * @param {Element} navSections The nav sections within the container element
- * @param {*} forceExpanded Optional param to force nav expand behavior when not null
- */
 function toggleMenu(nav, navSections, forceExpanded = null) {
   const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
   const button = nav.querySelector('.nav-hamburger button');
@@ -104,20 +94,14 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
   }
 }
 
-/**
- * Builds the cart overlay panel
- */
 function buildCartOverlay() {
-  // backdrop
   const overlay = document.createElement('div');
   overlay.classList.add('cart-overlay-backdrop');
   document.body.append(overlay);
 
-  // panel
   const panel = document.createElement('div');
   panel.classList.add('cart-overlay-panel');
 
-  // panel header
   const panelHeader = document.createElement('div');
   panelHeader.classList.add('cart-overlay-header');
 
@@ -133,11 +117,9 @@ function buildCartOverlay() {
   panelHeader.append(panelTitle);
   panelHeader.append(closeBtn);
 
-  // items container
   const itemsContainer = document.createElement('div');
   itemsContainer.classList.add('cart-overlay-items');
 
-  // footer
   const panelFooter = document.createElement('div');
   panelFooter.classList.add('cart-overlay-footer');
 
@@ -153,7 +135,6 @@ function buildCartOverlay() {
   panel.append(panelFooter);
   document.body.append(panel);
 
-  // load cart-items fragment only once
   let fragmentLoaded = false;
 
   async function loadCartFragment() {
@@ -162,36 +143,19 @@ function buildCartOverlay() {
       const resp = await fetch('/fragments/cart-items.plain.html');
       if (!resp.ok) throw new Error('Failed to fetch fragment');
       const html = await resp.text();
-
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
-
-      // plain.html returns main content directly
       const fragmentContent = doc.querySelector('main') || doc.body;
-
       if (fragmentContent) {
         itemsContainer.textContent = '';
         while (fragmentContent.firstElementChild) {
           itemsContainer.append(fragmentContent.firstElementChild);
         }
-
-        // find and decorate the cart-items block
         const cartBlock = itemsContainer.querySelector('.cart-items');
-
-        // eslint-disable-next-line no-console
-        console.log('cart block found:', cartBlock);
-
-        if (cartBlock) {
-          decorateCartItems(cartBlock);
-          fragmentLoaded = true;
-        } else {
-          // eslint-disable-next-line no-console
-          console.log('cart-items block not found, innerHTML:', itemsContainer.innerHTML);
-        }
+        if (cartBlock) decorateCartItems(cartBlock);
+        fragmentLoaded = true;
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('loadCartFragment error:', e);
       itemsContainer.innerHTML = '<p class="cart-overlay-empty">Failed to load cart.</p>';
     }
   }
@@ -200,11 +164,9 @@ function buildCartOverlay() {
     panel.classList.add('open');
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
-
     if (!fragmentLoaded) {
       loadCartFragment();
     } else {
-      // fragment already loaded - just dispatch cart-updated to re-render
       window.dispatchEvent(new CustomEvent('cart-updated'));
     }
   }
@@ -217,7 +179,6 @@ function buildCartOverlay() {
 
   closeBtn.addEventListener('click', closePanel);
   overlay.addEventListener('click', closePanel);
-
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Escape') closePanel();
   });
@@ -225,19 +186,35 @@ function buildCartOverlay() {
   return { openPanel };
 }
 
-/**
- * loads and decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
+function buildAccountDropdown(navWrapper) {
+  // create dropdown
+  const dropdown = document.createElement('div');
+  dropdown.classList.add('nav-account-dropdown');
+
+  const userName = document.createElement('p');
+  userName.classList.add('nav-account-name');
+
+  const logoutBtn = document.createElement('button');
+  logoutBtn.classList.add('nav-account-logout');
+  logoutBtn.textContent = 'Logout';
+  logoutBtn.addEventListener('click', () => {
+    sessionStorage.removeItem('loggedInUser');
+    window.location.reload();
+  });
+
+  dropdown.append(userName);
+  dropdown.append(logoutBtn);
+
+  return dropdown;
+}
+
 export default async function decorate(block) {
-  // load nav as fragment
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
   block.textContent = '';
 
-  // add promotional banner before the nav
   const promo = document.createElement('div');
   promo.className = 'nav-promotional';
   promo.innerHTML = '<p>Get <strong>15%</strong> off and free shipping with discount code "<strong>welcome</strong>"</p>';
@@ -290,20 +267,20 @@ export default async function decorate(block) {
   navWrapper.append(nav);
   block.append(navWrapper);
 
-  // ── CART BADGE ──
-  const updateCartCount = () => {
+  // ── CART + ACCOUNT LOGIC ──
+  const updateNavState = () => {
     try {
       const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
       const totalQty = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser') || 'null');
 
-      // try multiple selectors
       const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-        || navWrapper.querySelector('span[aria-label="Cart"]')
-        || navWrapper.querySelector('.nav-tools p:last-of-type span')
-        || navWrapper.querySelector('.nav-tools p:last-of-type');
+        || navWrapper.querySelector('span[aria-label="Cart"]');
+      const accountIcon = navWrapper.querySelector('.nav-account-icon')
+        || navWrapper.querySelector('span[aria-label="Account"]');
 
+      // ── CART BADGE ──
       if (cartIcon) {
-        cartIcon.style.cursor = 'pointer';
         cartIcon.style.position = 'relative';
         cartIcon.style.display = 'inline-flex';
 
@@ -313,8 +290,48 @@ export default async function decorate(block) {
           badge.classList.add('cart-badge');
           cartIcon.append(badge);
         }
-        badge.textContent = totalQty;
-        badge.style.display = totalQty > 0 ? 'flex' : 'none';
+
+        if (loggedInUser) {
+          // user logged in — hide cart badge
+          badge.style.display = 'none';
+        } else {
+          badge.textContent = totalQty;
+          badge.style.display = totalQty > 0 ? 'flex' : 'none';
+        }
+      }
+
+      // ── ACCOUNT ICON ──
+      if (accountIcon) {
+        if (loggedInUser) {
+          // show account icon
+          accountIcon.style.display = 'inline-flex';
+          accountIcon.style.position = 'relative';
+
+          // add dropdown if not exists
+          let dropdown = accountIcon.querySelector('.nav-account-dropdown');
+          if (!dropdown) {
+            dropdown = buildAccountDropdown(navWrapper);
+            const nameEl = dropdown.querySelector('.nav-account-name');
+            if (nameEl) nameEl.textContent = `${loggedInUser.first_name} ${loggedInUser.last_name}`;
+            accountIcon.style.cursor = 'pointer';
+            accountIcon.append(dropdown);
+
+            // toggle dropdown on click
+            accountIcon.addEventListener('click', () => {
+              dropdown.classList.toggle('active');
+            });
+
+            // close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+              if (!accountIcon.contains(e.target)) {
+                dropdown.classList.remove('active');
+              }
+            });
+          }
+        } else {
+          // hide account icon
+          accountIcon.style.display = 'none';
+        }
       }
     } catch (e) {
       // fail silently
@@ -322,14 +339,8 @@ export default async function decorate(block) {
   };
 
   // ── CART OVERLAY ──
-  // find cart icon after nav is built
   const cartIcon = navWrapper.querySelector('.nav-cart-icon')
-    || navWrapper.querySelector('span[aria-label="Cart"]')
-    || navWrapper.querySelector('.nav-tools p:last-of-type span')
-    || navWrapper.querySelector('.nav-tools p:last-of-type');
-
-  // always listen for cart updates regardless of icon found
-  window.addEventListener('cart-updated', updateCartCount);
+    || navWrapper.querySelector('span[aria-label="Cart"]');
 
   if (cartIcon) {
     cartIcon.style.cursor = 'pointer';
@@ -337,5 +348,7 @@ export default async function decorate(block) {
     cartIcon.addEventListener('click', openPanel);
   }
 
-  updateCartCount();
+  window.addEventListener('cart-updated', updateNavState);
+
+  updateNavState();
 }
