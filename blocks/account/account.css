@@ -7,21 +7,95 @@
 .account-wrapper {
   max-width: 1264px;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 2rem;
+  box-sizing: border-box;
 }
 
-.account-wrapper h1 {
+/* welcome section */
+.account-welcome {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.account-welcome h1 {
   font-size: 1.75rem;
   font-weight: 700;
   color: #1a3c2e;
   margin: 0;
 }
 
-.account-welcome {
-  font-size: 1rem;
+.account-welcome p {
+  font-size: 0.95rem;
   color: #555;
   margin: 0;
+}
+
+/* two column layout */
+.account-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* left - cart items */
+.account-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* right - order summary */
+.account-right {
+  position: sticky;
+  top: 100px;
+}
+
+/* loading / error */
+.account-loading,
+.account-error {
+  font-size: 0.875rem;
+  color: #888;
+  padding: 2rem 0;
+}
+
+/* override cart-items styles for account page */
+.account-left .cart-item-row {
+  grid-template-columns: 80px 1fr 40px;
+}
+
+.account-left .cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* quantity shown below name */
+.account-left .cart-item-qty {
+  margin-top: 0.35rem;
+}
+
+/* mobile */
+@media (width < 900px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .account-right {
+    position: static;
+  }
+}
+
+/* quantity label */
+.account-item-qty {
+  font-size: 0.82rem;
+  color: #888;
+  margin: 0;
+  font-weight: 500;
 }
