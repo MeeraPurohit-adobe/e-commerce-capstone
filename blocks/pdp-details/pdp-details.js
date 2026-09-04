@@ -256,6 +256,8 @@ export default async function decorate(block) {
         document.querySelector('.pdp-quantity-input')?.value || '1',
         10,
       );
+
+      // add to cart with selected quantity
       addToCart({ ...product, quantity });
 
       // show success feedback
@@ -267,6 +269,7 @@ export default async function decorate(block) {
         cartBtn.classList.remove('pdp-cart-btn--success');
       }, 2000);
     });
+
 
     // wishlist heart button
     const wishlistBtn = document.createElement('button');
