@@ -366,15 +366,17 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   flex-direction: row;
   align-items: center;
   gap: 1.25rem;
+  flex-shrink: 0;
 }
 
 .nav-tools p {
   margin: 0;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
-/* search and cart icons */
+/* search and cart and account icons */
 .nav-tools a,
 .nav-tools .nav-cart-icon,
 .nav-tools .nav-account-icon {
@@ -385,6 +387,8 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
+  position: relative;
+  white-space: nowrap;
 }
 
 .nav-tools a:hover,

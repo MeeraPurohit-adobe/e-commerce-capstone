@@ -292,9 +292,10 @@ export default async function decorate(block) {
         }
 
         if (loggedInUser) {
-          // user logged in — hide cart badge
+          // logged in — hide only the badge count, keep cart icon visible
           badge.style.display = 'none';
         } else {
+          // not logged in — show badge with count
           badge.textContent = totalQty;
           badge.style.display = totalQty > 0 ? 'flex' : 'none';
         }
