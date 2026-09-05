@@ -49,14 +49,27 @@ export default async function decorate(block) {
   block.append(wrapper);
 
   try {
-    // fetch all products from sheet
+    let filtered = [];
+
+    // ── STEP 1: try helix query index first (learning purpose) ──
+    const queryResp = await fetch('/_query/categories.json');
+    if (queryResp.ok) {
+      const queryJson = await queryResp.json();
+      // eslint-disable-next-line no-console
+      console.log('helix-query categories:', queryJson);
+      // query index returns page metadata not product data
+      // so we still need to fetch products from sheet
+      // but we log it to show helix-query is working
+    }
+
+    // ── STEP 2: always fetch product data from sheet ──
     const resp = await fetch('/data/plants-listing.json?limit=1000');
     if (!resp.ok) throw new Error('Failed to fetch');
     const json = await resp.json();
     const allProducts = json.data || [];
 
     // filter by categories column matching h1 text
-    const filtered = allProducts.filter((p) => p.categories
+    filtered = allProducts.filter((p) => p.categories
       && p.categories.toLowerCase() === categoryName.toLowerCase());
 
     // update count
@@ -66,13 +79,13 @@ export default async function decorate(block) {
 
     if (!filtered.length) {
       grid.innerHTML = `
-        <div class="category-listing-empty">
-          <p class="category-listing-empty-icon">🌿</p>
-          <p class="category-listing-empty-title">No products found in ${categoryName}</p>
-          <p class="category-listing-empty-text">Check back later for new arrivals.</p>
-          <a href="/products/product-listing-page" class="category-listing-empty-btn">Browse All Products</a>
-        </div>
-      `;
+      <div class="category-listing-empty">
+        <p class="category-listing-empty-icon">🌿</p>
+        <p class="category-listing-empty-title">No products found in ${categoryName}</p>
+        <p class="category-listing-empty-text">Check back later for new arrivals.</p>
+        <a href="/products/product-listing-page" class="category-listing-empty-btn">Browse All Products</a>
+      </div>
+    `;
       return;
     }
 
