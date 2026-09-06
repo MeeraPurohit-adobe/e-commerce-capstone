@@ -34,7 +34,6 @@ export default function decorate(block) {
 
   // read button links from HTML
   const continueLink = rows[8]?.querySelector('a:first-child')?.href || '/products/product-listing-page';
-  const checkoutLink = rows[8]?.querySelector('a:last-child')?.href || '/cart/review-order';
 
   // generate random values
   const discount = getRandomAmount(discountMax);
@@ -166,9 +165,9 @@ export default function decorate(block) {
 
   // subtotal row placeholder
   const subtotalRow = buildRow('Subtotal', '₹0');
-  const discountRow = buildRow(`Discount`, `-₹${discount}`);
+  const discountRow = buildRow('Discount', `-₹${discount}`);
   const giftRow = buildRow('Gift Certificate', `-₹${gift}`);
-  const taxRow = buildRow(`Tax`, `+₹${tax}`);
+  const taxRow = buildRow('Tax', `+₹${tax}`);
   const shippingRow = buildRow('Shipping', `+₹${shipping}`);
 
   function renderSummary() {
@@ -178,7 +177,6 @@ export default function decorate(block) {
     subtotalRow.querySelector('.order-summary-value').textContent = `₹${subtotal}`;
     totalRow.querySelector('.order-summary-value').textContent = `₹${Math.max(0, total)}`;
 
-    // update promo row if applied
     const existingPromoRow = wrapper.querySelector('.order-summary-promo-applied');
     if (existingPromoRow) existingPromoRow.remove();
     if (promoDiscount > 0) {

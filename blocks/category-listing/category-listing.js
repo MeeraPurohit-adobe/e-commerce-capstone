@@ -81,7 +81,6 @@ export default async function decorate(block) {
       const card = buildCard(product);
       grid.append(card);
     });
-
   } catch (e) {
     grid.innerHTML = '<p class="category-listing-error">Failed to load products.</p>';
   }

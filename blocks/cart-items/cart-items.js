@@ -157,7 +157,7 @@ function buildCartRow(item, onUpdate) {
   const deleteBtn = document.createElement('button');
   deleteBtn.classList.add('cart-item-delete');
   deleteBtn.setAttribute('aria-label', 'Remove item');
-  deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+  deleteBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>';
   deleteBtn.addEventListener('click', () => {
     const cart = getCart().filter((i) => String(i.id) !== String(item.id));
     saveCart(cart);
@@ -184,11 +184,11 @@ export default function decorate(block) {
   // build header
   const header = document.createElement('div');
   header.classList.add('cart-items-header');
-  headers.forEach((text) => {
-    const span = document.createElement('span');
-    span.textContent = text;
-    header.append(span);
-  });
+  // headers.forEach((text) => {
+  //   const span = document.createElement('span');
+  //   span.textContent = text;
+  //   header.append(span);
+  // });
   // extra empty span for delete column
   header.append(document.createElement('span'));
 

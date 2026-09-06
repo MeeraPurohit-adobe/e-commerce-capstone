@@ -1,4 +1,0 @@
-mountpoints:
-  /:
-    url: https://content.da.live/meerapurohit-adobe/e-commerce-capstone
-    type: markup
