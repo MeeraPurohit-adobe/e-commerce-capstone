@@ -100,6 +100,20 @@ export default function decorate(block) {
 
   let promoDiscount = 0;
 
+  // divider
+  const divider = document.createElement('hr');
+  divider.classList.add('order-summary-divider');
+
+  // total row placeholder
+  const totalRow = buildRow('Total', '₹0', 'order-summary-total');
+
+  // subtotal row placeholder
+  const subtotalRow = buildRow('Subtotal', '₹0');
+  const discountRow = buildRow('Discount', `-₹${discount}`);
+  const giftRow = buildRow('Gift Certificate', `-₹${gift}`);
+  const taxRow = buildRow('Tax', `+₹${tax}`);
+  const shippingRow = buildRow('Shipping', `+₹${shipping}`);
+
   function renderSummary() {
     const subtotal = getSubtotal();
     const total = subtotal - discount - gift - promoDiscount + tax + shipping;
@@ -134,13 +148,6 @@ export default function decorate(block) {
 
   promoSection.append(promoLabel);
   promoSection.append(promoInputRow);
-
-  // divider
-  const divider = document.createElement('hr');
-  divider.classList.add('order-summary-divider');
-
-  // total row placeholder
-  const totalRow = buildRow('Total', '₹0', 'order-summary-total');
 
   // buttons
   const continueBtn = document.createElement('a');
@@ -177,13 +184,6 @@ export default function decorate(block) {
       setTimeout(tryOpenPopup, 800);
     }
   });
-
-  // subtotal row placeholder
-  const subtotalRow = buildRow('Subtotal', '₹0');
-  const discountRow = buildRow('Discount', `-₹${discount}`);
-  const giftRow = buildRow('Gift Certificate', `-₹${gift}`);
-  const taxRow = buildRow('Tax', `+₹${tax}`);
-  const shippingRow = buildRow('Shipping', `+₹${shipping}`);
 
   // assemble
   wrapper.append(title);
