@@ -281,6 +281,11 @@ export default async function decorate(block) {
       if (cartIcon) {
         cartIcon.style.position = 'relative';
         cartIcon.style.display = 'inline-flex';
+        cartIcon.setAttribute('role', 'button');
+        cartIcon.setAttribute('tabindex', '0');
+        cartIcon.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') openPanel();
+        });
 
         let badge = cartIcon.querySelector('.cart-badge');
         if (!badge) {
@@ -301,6 +306,13 @@ export default async function decorate(block) {
       const wishlistIcon = navWrapper.querySelector('.icon-heart');
       if (wishlistIcon) {
         wishlistIcon.style.cursor = 'pointer';
+        wishlistIcon.setAttribute('role', 'button');
+        wishlistIcon.setAttribute('tabindex', '0');
+        wishlistIcon.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            window.location.href = '/wishlist/wishlist';
+          }
+        });
         wishlistIcon.addEventListener('click', () => {
           window.location.href = '/wishlist/wishlist';
         });

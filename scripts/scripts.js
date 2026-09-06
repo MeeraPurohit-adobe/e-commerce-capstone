@@ -209,6 +209,15 @@ function loadDelayed() {
 }
 
 async function loadPage() {
+  // add skip navigation link
+  const skipNav = document.createElement('a');
+  skipNav.href = '#main-content';
+  skipNav.classList.add('skip-nav');
+  skipNav.textContent = 'Skip to main content';
+  document.body.prepend(skipNav);
+  // add id to main
+  const main = document.querySelector('main');
+  if (main) main.id = 'main-content';
   await loadEager(document);
   await loadLazy(document);
   loadDelayed();
