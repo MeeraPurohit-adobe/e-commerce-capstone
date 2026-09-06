@@ -100,6 +100,21 @@ export default function decorate(block) {
 
   let promoDiscount = 0;
 
+  function renderSummary() {
+    const subtotal = getSubtotal();
+    const total = subtotal - discount - gift - promoDiscount + tax + shipping;
+
+    subtotalRow.querySelector('.order-summary-value').textContent = `₹${subtotal}`;
+    totalRow.querySelector('.order-summary-value').textContent = `₹${Math.max(0, total)}`;
+
+    const existingPromoRow = wrapper.querySelector('.order-summary-promo-applied');
+    if (existingPromoRow) existingPromoRow.remove();
+    if (promoDiscount > 0) {
+      const promoRow = buildRow('Promo (WELCOME)', `-₹${promoDiscount}`, 'order-summary-promo-applied');
+      wrapper.insertBefore(promoRow, divider);
+    }
+  }
+
   promoBtn.addEventListener('click', () => {
     const code = promoInput.value.trim().toLowerCase();
     if (code === 'welcome') {
@@ -169,21 +184,6 @@ export default function decorate(block) {
   const giftRow = buildRow('Gift Certificate', `-₹${gift}`);
   const taxRow = buildRow('Tax', `+₹${tax}`);
   const shippingRow = buildRow('Shipping', `+₹${shipping}`);
-
-  function renderSummary() {
-    const subtotal = getSubtotal();
-    const total = subtotal - discount - gift - promoDiscount + tax + shipping;
-
-    subtotalRow.querySelector('.order-summary-value').textContent = `₹${subtotal}`;
-    totalRow.querySelector('.order-summary-value').textContent = `₹${Math.max(0, total)}`;
-
-    const existingPromoRow = wrapper.querySelector('.order-summary-promo-applied');
-    if (existingPromoRow) existingPromoRow.remove();
-    if (promoDiscount > 0) {
-      const promoRow = buildRow('Promo (WELCOME)', `-₹${promoDiscount}`, 'order-summary-promo-applied');
-      wrapper.insertBefore(promoRow, divider);
-    }
-  }
 
   // assemble
   wrapper.append(title);

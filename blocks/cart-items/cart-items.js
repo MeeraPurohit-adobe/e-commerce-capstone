@@ -177,10 +177,6 @@ function buildCartRow(item, onUpdate) {
 export default function decorate(block) {
   loadCSS();
 
-  // read column headers from HTML
-  const headerRow = block.querySelector(':scope > div');
-  const headers = [...(headerRow?.querySelectorAll('p') || [])].map((p) => p.textContent.trim());
-
   // build header
   const header = document.createElement('div');
   header.classList.add('cart-items-header');
