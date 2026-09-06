@@ -1,5 +1,5 @@
-/* promo banner alt block */
-.promo-banner-alt {
+/* change .promo-banner-alt to .promo-banner throughout */
+.promo-banner {
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -9,8 +9,7 @@
   background-color: #0d4409;
 }
 
-/* two column row */
-.promo-banner-alt > div {
+.promo-banner > div {
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -19,7 +18,6 @@
   min-height: 480px;
 }
 
-/* image column - left */
 .promo-banner-alt-image {
   flex: 1 1 50%;
   overflow: hidden;
@@ -33,7 +31,6 @@
   display: block;
 }
 
-/* text column - right */
 .promo-banner-alt-text {
   flex: 1 1 50%;
   display: flex;
@@ -44,7 +41,6 @@
   border-radius: 0 16px 16px 0;
 }
 
-/* label */
 .promo-banner-alt-label {
   font-size: 0.75rem;
   font-weight: 700;
@@ -55,7 +51,6 @@
   width: fit-content;
 }
 
-/* heading */
 .promo-banner-alt-text h2 {
   font-size: 2.5rem;
   font-weight: 700;
@@ -64,7 +59,6 @@
   line-height: 1.2;
 }
 
-/* description */
 .promo-banner-alt-text p {
   font-size: 1rem;
   color: #fff;
@@ -73,7 +67,6 @@
   max-width: 380px;
 }
 
-/* CTA button */
 .promo-banner-alt-cta {
   display: inline-block;
   padding: 0.75rem 2rem;
@@ -92,13 +85,12 @@
   background-color: #6aeb60;
 }
 
-/* mobile */
 @media (width < 900px) {
-  .promo-banner-alt {
+  .promo-banner {
     border-radius: 12px;
   }
 
-  .promo-banner-alt > div {
+  .promo-banner > div {
     flex-direction: column;
     min-height: auto;
   }

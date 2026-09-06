@@ -5,16 +5,16 @@ export default function decorate(block) {
   const cols = [...row.querySelectorAll(':scope > div')];
 
   // image column - left
-  if (cols[0]) cols[0].classList.add('promo-banner-image');
+  if (cols[0]) cols[0].classList.add('promo-banner-alt-image');
 
   // text column - right
-  if (cols[1]) cols[1].classList.add('promo-banner-text');
+  if (cols[1]) cols[1].classList.add('promo-banner-alt-text');
 
   // first p = label
   const paras = cols[1]?.querySelectorAll('p');
-  if (paras && paras[0]) paras[0].classList.add('promo-banner-label');
+  if (paras && paras[0]) paras[0].classList.add('promo-banner-alt-label');
 
-  // last p containing link = CTA
+  // CTA link
   const cta = cols[1]?.querySelector('a');
-  if (cta) cta.classList.add('promo-banner-cta');
+  if (cta) cta.classList.add('promo-banner-alt-cta');
 }
