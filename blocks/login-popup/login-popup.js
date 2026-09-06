@@ -24,6 +24,11 @@ export function openLoginPopup() {
   if (popup) {
     popup.classList.add('active');
     document.body.style.overflow = 'hidden';
+    // move focus to email input
+    setTimeout(() => {
+      const emailInput = popup.querySelector('#login-email');
+      if (emailInput) emailInput.focus();
+    }, 100);
   }
 }
 

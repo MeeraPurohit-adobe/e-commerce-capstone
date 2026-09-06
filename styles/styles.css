@@ -833,3 +833,21 @@ main .section.highlight {
   line-height: 1;
   pointer-events: none;
 }
+
+/* skip navigation link */
+.skip-nav {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: #1a3c2e;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-nav:focus {
+  top: 0;
+}

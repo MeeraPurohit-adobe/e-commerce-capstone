@@ -4,7 +4,10 @@ export default function decorate(block) {
 
   const slider = document.createElement('div');
   slider.classList.add('carousel-slider');
-
+  // add ARIA to carousel
+  slider.setAttribute('role', 'region');
+  slider.setAttribute('aria-label', 'Product carousel');
+  slider.setAttribute('aria-live', 'polite');
   slides.forEach((slide, index) => {
     slide.classList.add('carousel-slide');
     if (index === 0) slide.classList.add('active');
@@ -76,6 +79,7 @@ export default function decorate(block) {
     const allDots = dotsWrapper.querySelectorAll('.carousel-dot');
     allSlides[current].classList.remove('active');
     allDots[current].classList.remove('active');
+    slider.setAttribute('aria-label', `Slide ${current + 1} of ${allSlides.length}`);
     current = (index + allSlides.length) % allSlides.length;
     allSlides[current].classList.add('active');
     allDots[current].classList.add('active');
