@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 /* nav base */
 header nav p {
   margin: 0;
@@ -361,6 +363,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 }
 
 /* nav tools icons spacing */
+
 /* nav tools - force all icons horizontal */
 .nav-tools {
   display: flex;

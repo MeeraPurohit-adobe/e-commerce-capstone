@@ -91,17 +91,17 @@ export default async function decorate(block) {
       Filters
     `;
 
-      function openDrawer() {
+      const openDrawer = () => {
         advanceFilter.classList.add('filter-open');
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
-      }
+      };
 
-      function closeDrawer() {
+      const closeDrawer = () => {
         advanceFilter.classList.remove('filter-open');
         overlay.classList.remove('active');
         document.body.style.overflow = '';
-      }
+      };
 
       filterBtn.addEventListener('click', openDrawer);
       closeBtn.addEventListener('click', closeDrawer);

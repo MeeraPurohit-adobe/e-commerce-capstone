@@ -6,9 +6,6 @@ export default function decorate(block) {
   const section = block.closest('.section');
   if (!section) return;
 
-  // find all fragment wrappers in the section
-  const allBlocks = [...section.querySelectorAll(':scope > div')];
-
   // identify gallery, details and accordion blocks
   const galleryBlock = section.querySelector('.pdp-gallery-wrapper, .pdp-gallery');
   const detailsBlock = section.querySelector('.pdp-details-wrapper, .product-detail-wrapper');

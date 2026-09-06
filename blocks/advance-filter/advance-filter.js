@@ -107,19 +107,7 @@ export default async function decorate(block) {
   const priceContainer = document.createElement('div');
   const ratingContainer = document.createElement('div');
 
-  // re-render all filters based on current filtered data
-  function refreshFilters() {
-    const filters = getFiltersFromURL();
-    const filteredData = applyFilters(allData, filters);
-
-    renderCategoryFilter(categoryContainer, filteredData, allData, onFilterChange);
-    renderFeaturesFilter(featuresContainer, filteredData, allData, onFilterChange);
-    renderLightFilter(lightContainer, filteredData, allData, onFilterChange);
-    renderSizeFilter(sizeContainer, allData, onFilterChange);
-    renderPriceFilter(priceContainer, allData, onFilterChange);
-    renderRatingFilter(ratingContainer, filteredData, onFilterChange);
-  }
-
+  /* eslint-disable no-use-before-define */
   function onFilterChange() {
     updateURLAndNotify({
       categories: getCategoryFilterValues(categoryContainer),
@@ -133,6 +121,19 @@ export default async function decorate(block) {
     // re-render filters with updated filtered data
     refreshFilters();
   }
+
+  function refreshFilters() {
+    const filters = getFiltersFromURL();
+    const filteredData = applyFilters(allData, filters);
+
+    renderCategoryFilter(categoryContainer, filteredData, allData, onFilterChange);
+    renderFeaturesFilter(featuresContainer, filteredData, allData, onFilterChange);
+    renderLightFilter(lightContainer, filteredData, allData, onFilterChange);
+    renderSizeFilter(sizeContainer, allData, onFilterChange);
+    renderPriceFilter(priceContainer, allData, onFilterChange);
+    renderRatingFilter(ratingContainer, filteredData, onFilterChange);
+  }
+  /* eslint-enable no-use-before-define */
 
   // reset button
   const resetBtn = document.createElement('button');

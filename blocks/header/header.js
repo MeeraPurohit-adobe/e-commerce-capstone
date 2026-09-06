@@ -267,6 +267,7 @@ export default async function decorate(block) {
   block.append(navWrapper);
 
   // ── UPDATE NAV STATE (badge + account) ──
+  let openCartPanel = () => {};
   const updateNavState = () => {
     try {
       const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
@@ -284,7 +285,7 @@ export default async function decorate(block) {
         cartIcon.setAttribute('role', 'button');
         cartIcon.setAttribute('tabindex', '0');
         cartIcon.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') openPanel();
+          if (e.key === 'Enter' || e.key === ' ') openCartPanel();
         });
 
         let badge = cartIcon.querySelector('.cart-badge');
@@ -363,6 +364,7 @@ export default async function decorate(block) {
   if (cartIcon) {
     cartIcon.style.cursor = 'pointer';
     const { openPanel } = buildCartOverlay();
+    openCartPanel = openPanel;
     cartIcon.addEventListener('click', openPanel);
   }
 

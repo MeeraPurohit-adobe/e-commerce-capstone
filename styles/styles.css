@@ -1,3 +1,5 @@
+/* stylelint-disable declaration-block-no-redundant-longhand-properties, no-descending-specificity, no-duplicate-selectors */
+
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -324,7 +326,7 @@ main>.section>div {
 }
 
 main>.section:first-of-type {
-  margin-top: 0;
+  margin-top: 35px;
 }
 
 @media (width >=900px) {
@@ -378,6 +380,7 @@ main .section.highlight {
 }
 
 /* sort - top right */
+
 /* sort - far right aligned */
 .plp-layout.section>.sort-wrapper {
   grid-area: sort;
@@ -457,7 +460,6 @@ main .section.highlight {
 }
 
 @media (width < 900px) {
-
   /* filter button */
   .plp-filter-btn {
     display: inline-flex;

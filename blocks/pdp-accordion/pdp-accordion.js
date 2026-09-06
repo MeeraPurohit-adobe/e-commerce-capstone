@@ -9,7 +9,7 @@ function loadCSS() {
 }
 
 function getProductIdFromURL() {
-  const search = window.location.search;
+  const { search } = window.location;
   const params = new URLSearchParams(search);
   const id = params.get('id');
   return id || '';
@@ -38,7 +38,7 @@ function buildAccordionItem(title, content, accordion) {
   // downward arrow SVG
   const icon = document.createElement('span');
   icon.classList.add('pdp-accordion-icon');
-  icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+  icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>';
 
   header.append(titleSpan);
   header.append(icon);
@@ -107,7 +107,6 @@ export default async function decorate(block) {
 
     block.textContent = '';
     block.append(accordion);
-
   } catch (e) {
     block.innerHTML = '<p class="pdp-accordion-error">Failed to load content.</p>';
   }

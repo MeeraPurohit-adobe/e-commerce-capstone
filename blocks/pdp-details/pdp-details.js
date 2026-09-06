@@ -279,7 +279,9 @@ export default async function decorate(block) {
 
     // ── RESTORE CART STATE ──
     const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-    const existingCartItem = cart.find((item) => String(item.id) === String(product.id));
+    const existingCartItem = cart.find(
+      (item) => String(item.id) === String(product.id),
+    );
     if (existingCartItem) {
       const qtyInput = quantitySelector.querySelector('.pdp-quantity-input');
       if (qtyInput) {
@@ -287,7 +289,9 @@ export default async function decorate(block) {
         const minusBtn = quantitySelector.querySelector('.pdp-quantity-btn:first-child');
         const plusBtn = quantitySelector.querySelector('.pdp-quantity-btn:last-child');
         if (minusBtn) minusBtn.disabled = existingCartItem.quantity <= 0;
-        if (plusBtn) plusBtn.disabled = existingCartItem.quantity >= parseInt(product.stock || 99, 10);
+        if (plusBtn) {
+          plusBtn.disabled = existingCartItem.quantity >= parseInt(product.stock || 99, 10);
+        }
       }
       cartBtn.textContent = 'Update Cart';
     }
@@ -321,7 +325,6 @@ export default async function decorate(block) {
 
     block.textContent = '';
     block.append(wrapper);
-
   } catch (e) {
     block.innerHTML = '<p class="pdp-details-error">Failed to load product details.</p>';
   }

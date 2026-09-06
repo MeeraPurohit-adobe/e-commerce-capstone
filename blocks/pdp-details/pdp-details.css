@@ -1,3 +1,5 @@
+/* stylelint-disable property-no-vendor-prefix, selector-class-pattern, no-duplicate-selectors, no-descending-specificity */
+
 /* pdp details block */
 .pdp-details-wrapper {
   display: flex;
@@ -115,9 +117,8 @@
 /* colors */
 .pdp-colors {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
 .pdp-color-dot {
@@ -143,9 +144,8 @@
 /* sizes */
 .pdp-sizes {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
   gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
 .pdp-size-btn {
@@ -229,7 +229,7 @@
   color: #333;
   outline: none;
   background: #fff;
-  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .pdp-quantity-input::-webkit-outer-spin-button,

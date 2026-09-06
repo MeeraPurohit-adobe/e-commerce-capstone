@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 /* footer base */
 footer {
   background-color: var(--light-color);

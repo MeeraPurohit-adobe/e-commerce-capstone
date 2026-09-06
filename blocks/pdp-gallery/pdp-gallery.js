@@ -1,5 +1,5 @@
 function getProductIdFromURL() {
-  const search = window.location.search;
+  const { search } = window.location;
   const params = new URLSearchParams(search);
   const id = params.get('id');
   return id || '';
@@ -95,7 +95,6 @@ export default async function decorate(block) {
     block.textContent = '';
     block.append(mainWrapper);
     block.append(thumbStrip);
-
   } catch (e) {
     block.innerHTML = '<p class="pdp-gallery-error">Failed to load images.</p>';
   }
