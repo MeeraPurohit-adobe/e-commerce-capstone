@@ -1,3 +1,5 @@
+/* stylelint-disable property-no-vendor-prefix */
+
 /* card item */
 .card-item {
   position: relative;
@@ -249,7 +251,7 @@
   color: #333;
   outline: none;
   background: #fff;
-  -moz-appearance: textfield;
+  appearance: textfield;
   width: 40px;
 }
 
