@@ -155,7 +155,13 @@ export function buildCard(product) {
     if (e.target.closest('.card-qty-wrapper')) return;
     if (e.target.closest('.card-qty-btn')) return;
     if (e.target.closest('.card-qty-input')) return;
-    window.location.href = `/products/product-detail-page?id=${product.id}`;
+    // navigate to individual product page
+    const slug = product.name
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .trim()
+      .replace(/\s+/g, '-');
+    window.location.href = `/pages/products/${slug}`;
   });
 
   // heart wishlist button
