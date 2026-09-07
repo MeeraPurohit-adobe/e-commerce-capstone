@@ -1,42 +1,40 @@
-function getProductIdFromURL() {
-  const { search } = window.location;
-  const params = new URLSearchParams(search);
-  const id = params.get('id');
-  return id || '';
-}
-
-async function fetchProductData(productId) {
-  const resp = await fetch('/data/plants-listing.json?limit=1000');
-  if (!resp.ok) throw new Error('Failed to fetch');
-  const json = await resp.json();
-  const products = json.data || [];
-  return products.find((p) => String(p.id) === String(productId)) || null;
-}
+import {
+  getSlugFromURL,
+  getIdFromURL,
+  fetchProductBySlug,
+  fetchProductById,
+} from '../../scripts/product-utils.js';
 
 export default async function decorate(block) {
-  const productId = getProductIdFromURL();
-
-  // show loading state
   block.innerHTML = '<p class="pdp-gallery-loading">Loading...</p>';
 
   try {
+    let product = null;
+
+    // ── STEP 1: try slug from /pages/products/<slug> ──
+    const slug = getSlugFromURL();
+    if (slug) {
+      product = await fetchProductBySlug(slug);
+    }
+
+    // ── STEP 2: fallback to ?id= param ──
+    if (!product) {
+      const id = getIdFromURL();
+      if (id) product = await fetchProductById(id);
+    }
+
     let images = [];
 
-    if (productId) {
-      // fetch from sheet dynamically
-      const product = await fetchProductData(productId);
-
-      if (product) {
-        // read image-1 through image-5 from sheet
-        ['image-1', 'image-2', 'image-3', 'image-4', 'image-5'].forEach((key) => {
-          if (product[key]) {
-            images.push({
-              src: product[key],
-              alt: `${product.name} - ${key}`,
-            });
-          }
-        });
-      }
+    if (product) {
+      // read image-1 through image-5 from sheet
+      ['image-1', 'image-2', 'image-3', 'image-4', 'image-5'].forEach((key) => {
+        if (product[key]) {
+          images.push({
+            src: product[key],
+            alt: `${product.name} - ${key}`,
+          });
+        }
+      });
     }
 
     // fallback to static links in block if no sheet data

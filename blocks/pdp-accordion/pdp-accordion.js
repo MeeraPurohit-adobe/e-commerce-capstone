@@ -1,3 +1,10 @@
+import {
+  getSlugFromURL,
+  getIdFromURL,
+  fetchProductBySlug,
+  fetchProductById,
+} from '../../scripts/product-utils.js';
+
 function loadCSS() {
   const cssPath = '/blocks/pdp-accordion/pdp-accordion.css';
   if (!document.querySelector(`link[href="${cssPath}"]`)) {
@@ -6,22 +13,6 @@ function loadCSS() {
     link.href = cssPath;
     document.head.append(link);
   }
-}
-
-function getProductIdFromURL() {
-  const { search } = window.location;
-  const params = new URLSearchParams(search);
-  const id = params.get('id');
-  return id || '';
-}
-
-async function fetchProductData(productId) {
-  const resp = await fetch('/data/plants-listing.json?limit=1000');
-  if (!resp.ok) throw new Error('Failed to fetch');
-  const json = await resp.json();
-  const products = json.data || [];
-  // match by numeric id
-  return products.find((p) => String(p.id) === String(productId)) || null;
 }
 
 function buildAccordionItem(title, content, accordion) {
@@ -88,10 +79,18 @@ export default async function decorate(block) {
   block.innerHTML = '<p class="pdp-accordion-loading">Loading...</p>';
 
   try {
-    const productId = getProductIdFromURL();
     let product = null;
-    if (productId) {
-      product = await fetchProductData(productId);
+
+    // ── STEP 1: try slug from /pages/products/<slug> ──
+    const slug = getSlugFromURL();
+    if (slug) {
+      product = await fetchProductBySlug(slug);
+    }
+
+    // ── STEP 2: fallback to ?id= param ──
+    if (!product) {
+      const id = getIdFromURL();
+      if (id) product = await fetchProductById(id);
     }
 
     const accordion = document.createElement('div');
