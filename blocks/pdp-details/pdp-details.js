@@ -1,6 +1,12 @@
 import { renderStars } from '../card/card.js';
 import { addToCart } from '../../scripts/cart-utils.js';
 import { toggleWishlist, isWishlisted } from '../../scripts/wishlist-utils.js';
+import {
+  getSlugFromURL,
+  getIdFromURL,
+  fetchProductBySlug,
+  fetchProductById,
+} from '../../scripts/product-utils.js';
 
 function loadCSS() {
   const cssPath = '/blocks/pdp-details/pdp-details.css';
@@ -10,23 +16,6 @@ function loadCSS() {
     link.href = cssPath;
     document.head.append(link);
   }
-}
-
-function getProductIdFromURL() {
-  try {
-    const url = new URL(window.location.href);
-    return url.searchParams.get('id') || '';
-  } catch (e) {
-    return '';
-  }
-}
-
-async function fetchProductData(productId) {
-  const resp = await fetch('/data/plants-listing.json?limit=1000');
-  if (!resp.ok) throw new Error('Failed to fetch');
-  const json = await resp.json();
-  const products = json.data || [];
-  return products.find((p) => String(p.id) === String(productId)) || null;
 }
 
 function showAddToCartSuccess(btn) {
@@ -41,7 +30,6 @@ function showAddToCartSuccess(btn) {
 
 function buildQuantitySelector(stock, product) {
   const maxQty = parseInt(stock, 10) || 99;
-
   const wrapper = document.createElement('div');
   wrapper.classList.add('pdp-quantity');
 
@@ -105,15 +93,21 @@ function buildQuantitySelector(stock, product) {
 
 export default async function decorate(block) {
   loadCSS();
-
   block.innerHTML = '<p class="pdp-details-loading">Loading product details...</p>';
-
-  const productId = getProductIdFromURL();
 
   try {
     let product = null;
-    if (productId) {
-      product = await fetchProductData(productId);
+
+    // ── STEP 1: try slug from /pages/products/<slug> ──
+    const slug = getSlugFromURL();
+    if (slug) {
+      product = await fetchProductBySlug(slug);
+    }
+
+    // ── STEP 2: fallback to ?id= param ──
+    if (!product) {
+      const id = getIdFromURL();
+      if (id) product = await fetchProductById(id);
     }
 
     if (!product) {
@@ -167,7 +161,7 @@ export default async function decorate(block) {
     price.classList.add('pdp-price');
     price.textContent = product.price;
 
-    // ── SHORT DESCRIPTION after price ──
+    // ── SHORT DESCRIPTION ──
     const shortDesc = document.createElement('p');
     shortDesc.classList.add('pdp-short-desc');
     shortDesc.textContent = product.description || '';
@@ -216,10 +210,7 @@ export default async function decorate(block) {
     const sizesWrapper = document.createElement('div');
     sizesWrapper.classList.add('pdp-sizes');
 
-    const sizesList = product.size
-      ? product.size.split(',')
-      : ['Small', 'Medium', 'Large'];
-
+    const sizesList = product.size ? product.size.split(',') : ['Small', 'Medium', 'Large'];
     sizesList.forEach((size) => {
       const btn = document.createElement('button');
       btn.classList.add('pdp-size-btn');
@@ -258,7 +249,7 @@ export default async function decorate(block) {
       cartBtn.textContent = 'Update Cart';
     });
 
-    // wishlist heart button
+    // wishlist
     const wishlistBtn = document.createElement('button');
     wishlistBtn.classList.add('pdp-wishlist-btn');
     wishlistBtn.setAttribute('aria-label', 'Add to wishlist');
@@ -279,9 +270,7 @@ export default async function decorate(block) {
 
     // ── RESTORE CART STATE ──
     const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
-    const existingCartItem = cart.find(
-      (item) => String(item.id) === String(product.id),
-    );
+    const existingCartItem = cart.find((item) => String(item.id) === String(product.id));
     if (existingCartItem) {
       const qtyInput = quantitySelector.querySelector('.pdp-quantity-input');
       if (qtyInput) {
@@ -296,7 +285,7 @@ export default async function decorate(block) {
       cartBtn.textContent = 'Update Cart';
     }
 
-    // ── DESCRIPTION after Add to Cart ──
+    // ── DESCRIPTION ──
     const descSection = document.createElement('div');
     descSection.classList.add('pdp-description');
 
