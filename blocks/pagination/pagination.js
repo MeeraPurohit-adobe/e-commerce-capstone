@@ -30,18 +30,21 @@ export function renderPagination(container, currentPage, totalPages, onPageChang
   nav.classList.add('pagination');
   nav.setAttribute('aria-label', 'pagination');
 
+  // prev button
   const prevBtn = document.createElement('button');
   prevBtn.classList.add('pagination-btn', 'pagination-prev');
   prevBtn.textContent = '← Prev';
   prevBtn.disabled = currentPage === 1;
   prevBtn.addEventListener('click', () => goToPage(currentPage - 1, totalPages, onPageChange));
 
+  // next button
   const nextBtn = document.createElement('button');
   nextBtn.classList.add('pagination-btn', 'pagination-next');
   nextBtn.textContent = 'Next →';
   nextBtn.disabled = currentPage === totalPages;
   nextBtn.addEventListener('click', () => goToPage(currentPage + 1, totalPages, onPageChange));
 
+  // page numbers with ellipsis
   const pageList = document.createElement('ul');
   pageList.classList.add('pagination-list');
 
@@ -90,10 +93,8 @@ export default async function decorate(block) {
   const PAGE_SIZE = 10;
 
   async function initPagination() {
-    // wait for product-listing to store total records
     let totalRecords = parseInt(sessionStorage.getItem('total-records') || '0', 10);
 
-    // if not yet set, fetch total from sheet
     if (!totalRecords) {
       try {
         const resp = await fetch('/data/plants-listing.json?limit=1000');
@@ -112,6 +113,8 @@ export default async function decorate(block) {
     function onPageChange(newPage) {
       currentPage = newPage;
       renderPagination(block, currentPage, totalPages, onPageChange);
+      // ── dispatch page-changed so product-listing re-renders ──
+      window.dispatchEvent(new CustomEvent('page-changed'));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -122,8 +125,17 @@ export default async function decorate(block) {
       currentPage = getPageFromURL();
       renderPagination(block, currentPage, totalPages, onPageChange);
     });
+
+    // re-render pagination when total changes (after filter)
+    window.addEventListener('filters-changed', () => {
+      setTimeout(() => {
+        const newTotal = parseInt(sessionStorage.getItem('total-records') || '0', 10);
+        const newTotalPages = Math.ceil(newTotal / PAGE_SIZE);
+        currentPage = 1;
+        renderPagination(block, currentPage, newTotalPages, onPageChange);
+      }, 200);
+    });
   }
 
-  // small delay to allow product-listing to set sessionStorage first
   setTimeout(initPagination, 100);
 }

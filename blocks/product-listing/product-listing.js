@@ -14,9 +14,9 @@ export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
-  // row 1 = heading
   const topCol = rows[0].querySelector(':scope > div');
 
+  // heading wrapper
   const headingWrapper = document.createElement('div');
   headingWrapper.classList.add('product-listing-heading-row');
 
@@ -29,7 +29,10 @@ export default async function decorate(block) {
   cardsSection.innerHTML = '<p class="product-listing-loading">Loading plants...</p>';
 
   block.textContent = '';
-  // mobile filter button + drawer
+  block.append(headingWrapper);
+  block.append(cardsSection);
+
+  // ── MOBILE FILTER BUTTON + DRAWER ──
   const section = block.closest('.section');
   if (section) {
     const advanceFilter = section.querySelector('.advance-filter-wrapper');
@@ -60,10 +63,8 @@ export default async function decorate(block) {
       const drawerContent = document.createElement('div');
       drawerContent.classList.add('plp-filter-drawer-content');
 
-      // move existing advance-filter inner wrapper into content
       const innerWrapper = advanceFilter.querySelector('.advance-filter-wrapper');
       if (innerWrapper) {
-        // move reset button to footer
         const resetBtn = innerWrapper.querySelector('.advance-filter-reset');
 
         const drawerFooter = document.createElement('div');
@@ -84,12 +85,14 @@ export default async function decorate(block) {
       const filterBtn = document.createElement('button');
       filterBtn.classList.add('plp-filter-btn');
       filterBtn.setAttribute('aria-label', 'Open filters');
+      filterBtn.setAttribute('role', 'button');
+      filterBtn.setAttribute('tabindex', '0');
       filterBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 6h18M6 12h12M10 18h4"/>
-      </svg>
-      Filters
-    `;
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 6h18M6 12h12M10 18h4"/>
+        </svg>
+        Filters
+      `;
 
       const openDrawer = () => {
         advanceFilter.classList.add('filter-open');
@@ -104,6 +107,9 @@ export default async function decorate(block) {
       };
 
       filterBtn.addEventListener('click', openDrawer);
+      filterBtn.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openDrawer();
+      });
       closeBtn.addEventListener('click', closeDrawer);
       overlay.addEventListener('click', closeDrawer);
 
@@ -114,9 +120,8 @@ export default async function decorate(block) {
       headingWrapper.append(filterBtn);
     }
   }
-  block.append(headingWrapper);
-  block.append(cardsSection);
 
+  // ── LOAD PAGE FUNCTION ──
   async function loadPage(page) {
     cardsSection.innerHTML = '<p class="product-listing-loading">Loading...</p>';
 
@@ -124,11 +129,11 @@ export default async function decorate(block) {
       // step 1 — get all sorted data
       const allData = await getSortedData(DATA_URL);
 
-      // step 2 — apply filters from URL
+      // step 2 — apply filters
       const filters = getFiltersFromURL();
       const filteredData = applyFilters(allData, filters);
 
-      // step 3 — update count in heading
+      // step 3 — update count beside Plants heading
       const h1 = headingWrapper.querySelector('h1');
       if (h1) {
         const existingCount = h1.querySelector('.product-count');
@@ -139,9 +144,11 @@ export default async function decorate(block) {
         h1.append(countSpan);
       }
 
-      // step 4 — paginate
-      const start = (page - 1) * PAGE_SIZE;
-      const products = filteredData.slice(start, start + PAGE_SIZE);
+      // step 4 — correct offset calculation
+      const currentPage = parseInt(page, 10) || 1;
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const products = filteredData.slice(start, end);
 
       // store total for pagination block
       sessionStorage.setItem('total-records', filteredData.length);
@@ -167,8 +174,9 @@ export default async function decorate(block) {
     }
   }
 
-  // listen for filter and pagination changes
+  // ── EVENT LISTENERS ──
   window.addEventListener('filters-changed', () => loadPage(getPageFromURL()));
+  window.addEventListener('page-changed', () => loadPage(getPageFromURL()));
   window.addEventListener('popstate', () => loadPage(getPageFromURL()));
 
   // initial load
